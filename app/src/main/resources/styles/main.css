@@ -1,0 +1,239 @@
+/* ── Root ────────────────────────────────────────────── */
+.root {
+    -fx-background-color: #0b0c1a;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* ── Sidebar ─────────────────────────────────────────── */
+.sidebar {
+    -fx-background-color: #0d0e1f;
+}
+
+.app-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.app-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6b7db3;
+}
+
+.search-field {
+    -fx-background-color: #1a1c35;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #4a5280;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #2a2d50;
+    -fx-border-width: 1;
+    -fx-padding: 8 14 8 14;
+    -fx-font-size: 13px;
+}
+
+.search-field:focused {
+    -fx-border-color: #5b6ef5;
+    -fx-background-color: #1e2040;
+}
+
+.section-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #3a4070;
+    -fx-font-weight: bold;
+}
+
+/* ── List ────────────────────────────────────────────── */
+.body-list {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.body-list .viewport {
+    -fx-background-color: transparent;
+}
+
+.body-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #2a2d50;
+    -fx-background-radius: 4;
+}
+
+.body-list .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.body-list .scroll-bar:vertical .increment-button,
+.body-list .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 3 8 3 8;
+}
+
+.list-cell:selected,
+.list-cell:selected:focused {
+    -fx-background-color: transparent;
+}
+
+/* ── Planet cards ────────────────────────────────────── */
+.planet-card {
+    -fx-background-color: #13152b;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #1e2245;
+    -fx-border-width: 1;
+    -fx-padding: 10 12 10 12;
+    -fx-cursor: hand;
+}
+
+.planet-card:hover {
+    -fx-background-color: #1a1d38;
+    -fx-border-color: #3d4480;
+}
+
+.planet-card-selected {
+    -fx-background-color: #1e2255;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #5b6ef5;
+    -fx-border-width: 1.5;
+    -fx-padding: 10 12 10 12;
+    -fx-cursor: hand;
+}
+
+.card-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c8ccf0;
+}
+
+.card-name-selected {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.img-wrap {
+    -fx-background-color: #1a1d38;
+    -fx-background-radius: 20;
+    -fx-min-width: 40;
+    -fx-max-width: 40;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+}
+
+/* ── Badges ──────────────────────────────────────────── */
+.badge {
+    -fx-font-size: 10px;
+    -fx-background-radius: 10;
+    -fx-padding: 1 7 1 7;
+}
+
+.badge-planet {
+    -fx-background-color: #1a3a5c;
+    -fx-text-fill: #5bc8fa;
+}
+
+.badge-star {
+    -fx-background-color: #3a2800;
+    -fx-text-fill: #f5c518;
+}
+
+.badge-dwarf {
+    -fx-background-color: #2a1a40;
+    -fx-text-fill: #c084fc;
+}
+
+/* ── Detail panel ────────────────────────────────────── */
+.detail-panel {
+    -fx-background-color: #0b0c1a;
+    -fx-padding: 36 40 36 40;
+}
+
+.detail-name {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.detail-badge {
+    -fx-font-size: 12px;
+    -fx-background-radius: 12;
+    -fx-padding: 4 14 4 14;
+}
+
+.detail-about-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #3a4070;
+    -fx-font-weight: bold;
+}
+
+.detail-desc {
+    -fx-font-size: 14px;
+    -fx-text-fill: #8891c4;
+    -fx-wrap-text: true;
+}
+
+.detail-img-wrap {
+    -fx-background-color: #1a1d38;
+    -fx-background-radius: 80;
+    -fx-min-width: 160;
+    -fx-max-width: 160;
+    -fx-min-height: 160;
+    -fx-max-height: 160;
+}
+
+.divider {
+    -fx-background-color: #1a1d35;
+    -fx-min-height: 1;
+    -fx-max-height: 1;
+    -fx-pref-height: 1;
+}
+
+.placeholder-text {
+    -fx-font-size: 16px;
+    -fx-text-fill: #2a2d50;
+}
+
+/* ── Stat cards ──────────────────────────────────────── */
+.stat-card {
+    -fx-background-color: #0f1128;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #1e2245;
+    -fx-border-width: 1;
+    -fx-padding: 16 24 16 24;
+    -fx-min-width: 160;
+}
+
+.stat-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #4a5280;
+}
+
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.stat-unit {
+    -fx-font-size: 11px;
+    -fx-text-fill: #4a5280;
+}
+
+/* ── SplitPane ───────────────────────────────────────── */
+.split-pane {
+    -fx-background-color: #0b0c1a;
+    -fx-box-border: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane-divider {
+    -fx-background-color: #1e2040;
+    -fx-padding: 0 1 0 1;
+}
