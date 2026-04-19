@@ -4,6 +4,10 @@
     "type": "Planet",
     "distanceFromSun": 0.39,
     "radiusKm": 2439.7,
+    "orbitalPeriodDays": 88,
+    "orbitalSpeedFactor": 4.15,
+    "color": "#b5b5b5",
+    "displayRadius": 4,
     "description": "Smallest planet, closest to the Sun."
   },
   {
@@ -11,6 +15,10 @@
     "type": "Planet",
     "distanceFromSun": 0.72,
     "radiusKm": 6051.8,
+    "orbitalPeriodDays": 225,
+    "orbitalSpeedFactor": 1.62,
+    "color": "#e8cda0",
+    "displayRadius": 7,
     "description": "Hottest planet due to thick atmosphere."
   },
   {
@@ -18,6 +26,10 @@
     "type": "Planet",
     "distanceFromSun": 1.0,
     "radiusKm": 6371.0,
+    "orbitalPeriodDays": 365,
+    "orbitalSpeedFactor": 1.0,
+    "color": "#4fa3e0",
+    "displayRadius": 7,
     "description": "Our home planet, only known planet with life."
   },
   {
@@ -25,6 +37,10 @@
     "type": "Planet",
     "distanceFromSun": 1.52,
     "radiusKm": 3389.5,
+    "orbitalPeriodDays": 687,
+    "orbitalSpeedFactor": 0.53,
+    "color": "#c1440e",
+    "displayRadius": 5,
     "description": "The Red Planet, has the largest volcano."
   },
   {
@@ -32,6 +48,10 @@
     "type": "Planet",
     "distanceFromSun": 5.20,
     "radiusKm": 69911.0,
+    "orbitalPeriodDays": 4333,
+    "orbitalSpeedFactor": 0.08,
+    "color": "#c88b3a",
+    "displayRadius": 18,
     "description": "Largest planet, famous for its Great Red Spot."
   },
   {
@@ -39,6 +59,10 @@
     "type": "Planet",
     "distanceFromSun": 9.58,
     "radiusKm": 58232.0,
+    "orbitalPeriodDays": 10759,
+    "orbitalSpeedFactor": 0.034,
+    "color": "#e4d191",
+    "displayRadius": 15,
     "description": "Known for its stunning ring system."
   },
   {
@@ -46,6 +70,10 @@
     "type": "Planet",
     "distanceFromSun": 19.22,
     "radiusKm": 25362.0,
+    "orbitalPeriodDays": 30687,
+    "orbitalSpeedFactor": 0.012,
+    "color": "#7de8e8",
+    "displayRadius": 11,
     "description": "Rotates on its side, ice giant."
   },
   {
@@ -53,6 +81,10 @@
     "type": "Planet",
     "distanceFromSun": 30.05,
     "radiusKm": 24622.0,
+    "orbitalPeriodDays": 60190,
+    "orbitalSpeedFactor": 0.006,
+    "color": "#3f54ba",
+    "displayRadius": 10,
     "description": "Farthest planet, has the strongest winds."
   },
   {
@@ -60,6 +92,10 @@
     "type": "DwarfPlanet",
     "distanceFromSun": 39.48,
     "radiusKm": 1188.3,
+    "orbitalPeriodDays": 90560,
+    "orbitalSpeedFactor": 0.004,
+    "color": "#a89070",
+    "displayRadius": 3,
     "description": "Reclassified as a dwarf planet in 2006."
   },
   {
@@ -67,6 +103,10 @@
     "type": "Star",
     "distanceFromSun": 0.0,
     "radiusKm": 695700.0,
+    "orbitalPeriodDays": 0,
+    "orbitalSpeedFactor": 0,
+    "color": "#FFD700",
+    "displayRadius": 28,
     "description": "The star at the center of our solar system."
   }
 ]

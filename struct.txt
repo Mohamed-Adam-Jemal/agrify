@@ -1,0 +1,202 @@
+.
+├── app
+│   ├── bin
+│   │   ├── main
+│   │   │   ├── data
+│   │   │   │   └── planets.json
+│   │   │   ├── images
+│   │   │   │   └── jupiter.jpg
+│   │   │   ├── org
+│   │   │   │   └── falconsteam
+│   │   │   │       └── solarsystemexplorer
+│   │   │   │           ├── App.class
+│   │   │   │           ├── controller
+│   │   │   │           │   └── MainController.class
+│   │   │   │           ├── data
+│   │   │   │           │   └── PlanetDataLoader.class
+│   │   │   │           ├── interfaces
+│   │   │   │           ├── model
+│   │   │   │           │   ├── CelestialBody.class
+│   │   │   │           │   ├── DwarfPlanet.class
+│   │   │   │           │   ├── Planet.class
+│   │   │   │           │   └── Star.class
+│   │   │   │           ├── utils
+│   │   │   │           └── view
+│   │   │   │               ├── DetailView.class
+│   │   │   │               ├── MainView$1.class
+│   │   │   │               ├── MainView.class
+│   │   │   │               └── PlanetAssets.class
+│   │   │   └── styles
+│   │   │       └── main.css
+│   │   └── test
+│   │       └── org
+│   │           └── falconsteam
+│   │               └── solarsystemexplorer
+│   │                   └── AppTest.class
+│   ├── build
+│   │   ├── classes
+│   │   │   └── java
+│   │   │       └── main
+│   │   │           └── org
+│   │   │               └── falconsteam
+│   │   │                   └── solarsystemexplorer
+│   │   │                       ├── App.class
+│   │   │                       ├── controller
+│   │   │                       │   └── MainController.class
+│   │   │                       ├── data
+│   │   │                       │   └── PlanetDataLoader.class
+│   │   │                       ├── model
+│   │   │                       │   ├── CelestialBody.class
+│   │   │                       │   ├── DwarfPlanet.class
+│   │   │                       │   ├── Planet.class
+│   │   │                       │   └── Star.class
+│   │   │                       └── view
+│   │   │                           ├── DetailView.class
+│   │   │                           ├── MainView$1.class
+│   │   │                           ├── MainView.class
+│   │   │                           └── PlanetAssets.class
+│   │   ├── generated
+│   │   │   └── sources
+│   │   │       ├── annotationProcessor
+│   │   │       │   └── java
+│   │   │       │       └── main
+│   │   │       └── headers
+│   │   │           └── java
+│   │   │               └── main
+│   │   ├── resources
+│   │   │   └── main
+│   │   │       ├── data
+│   │   │       │   └── planets.json
+│   │   │       ├── images
+│   │   │       │   └── jupiter.jpg
+│   │   │       └── styles
+│   │   │           └── main.css
+│   │   └── tmp
+│   │       ├── artifactTransforms
+│   │       ├── assemble
+│   │       ├── assembleDist
+│   │       ├── build
+│   │       ├── buildDependents
+│   │       ├── buildEnvironment
+│   │       ├── buildNeeded
+│   │       ├── check
+│   │       ├── classes
+│   │       ├── clean
+│   │       ├── compileJava
+│   │       │   ├── compileTransaction
+│   │       │   │   ├── backup-dir
+│   │       │   │   └── stash-dir
+│   │       │   │       ├── App.class.uniqueId3
+│   │       │   │       ├── DetailView.class.uniqueId0
+│   │       │   │       ├── MainController.class.uniqueId4
+│   │       │   │       ├── MainView$1.class.uniqueId2
+│   │       │   │       ├── MainView.class.uniqueId1
+│   │       │   │       └── PlanetAssets.class.uniqueId5
+│   │       │   └── previous-compilation-data.bin
+│   │       ├── compileTestJava
+│   │       ├── dependencies
+│   │       ├── dependencyInsight
+│   │       ├── distTar
+│   │       ├── distZip
+│   │       ├── help
+│   │       ├── installDist
+│   │       ├── jar
+│   │       │   └── MANIFEST.MF
+│   │       ├── javadoc
+│   │       ├── javaToolchains
+│   │       ├── outgoingVariants
+│   │       ├── processResources
+│   │       ├── processTestResources
+│   │       ├── projects
+│   │       ├── properties
+│   │       ├── resolvableConfigurations
+│   │       ├── run
+│   │       ├── runSingle
+│   │       ├── startScripts
+│   │       ├── tasks
+│   │       ├── test
+│   │       └── testClasses
+│   ├── build.gradle
+│   └── src
+│       ├── main
+│       │   ├── java
+│       │   │   └── org
+│       │   │       └── falconsteam
+│       │   │           └── solarsystemexplorer
+│       │   │               ├── App.java
+│       │   │               ├── controller
+│       │   │               │   ├── DetailController.java
+│       │   │               │   └── MainController.java
+│       │   │               ├── data
+│       │   │               │   └── PlanetDataLoader.java
+│       │   │               ├── interfaces
+│       │   │               │   ├── Describable.java
+│       │   │               │   ├── Observable.java
+│       │   │               │   └── Orbitable.java
+│       │   │               ├── model
+│       │   │               │   ├── CelestialBody.java
+│       │   │               │   ├── DwarfPlanet.java
+│       │   │               │   ├── Moon.java
+│       │   │               │   ├── Planet.java
+│       │   │               │   └── Star.java
+│       │   │               ├── utils
+│       │   │               │   └── OrbitCalculator.java
+│       │   │               └── view
+│       │   │                   ├── CompareView.java
+│       │   │                   ├── DetailView.java
+│       │   │                   ├── MainView.java
+│       │   │                   └── PlanetAssets.java
+│       │   └── resources
+│       │       ├── data
+│       │       │   └── planets.json
+│       │       ├── images
+│       │       │   └── jupiter.jpg
+│       │       └── styles
+│       │           └── main.css
+│       └── test
+│           ├── java
+│           │   └── org
+│           │       └── falconsteam
+│           │           └── solarsystemexplorer
+│           │               └── AppTest.java
+│           └── resources
+├── build
+│   ├── reports
+│   │   ├── configuration-cache
+│   │   │   ├── dw0xu0he6dqp7s0rgcemgvg4k
+│   │   │   │   └── e0602nnw6uor5xg6mquqynmi0
+│   │   │   │       └── configuration-cache-report.html
+│   │   │   └── hyzobsmhhpodjpo6sjf1z77m
+│   │   │       └── dr1hdme6pi9rhatcau0n8hlfn
+│   │   │           └── configuration-cache-report.html
+│   │   └── problems
+│   │       └── problems-report.html
+│   └── tmp
+│       ├── artifactTransforms
+│       ├── buildEnvironment
+│       ├── dependencies
+│       ├── dependencyInsight
+│       ├── help
+│       ├── init
+│       ├── javaToolchains
+│       ├── outgoingVariants
+│       ├── prepareKotlinBuildScriptModel
+│       ├── projects
+│       ├── properties
+│       ├── resolvableConfigurations
+│       ├── tasks
+│       ├── updateDaemonJvm
+│       └── wrapper
+├── gradle
+│   ├── libs.versions.toml
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── README.md
+├── settings.gradle
+└── struct.txt
+
+129 directories, 71 files
