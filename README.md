@@ -27,7 +27,7 @@ Agrify is a web platform that helps farmers monitor and manage their farm operat
 ## Getting Started
 
 ```bash
-git clone https://github.com/your-username/agrify.git
+git clone https://github.com/mohamed-adam-jemal/agrify.git
 cd agrify
 # Open index.html in your browser
 ```
@@ -40,8 +40,8 @@ No installation or build step required.
 
 | | Member |
 |---|---|
-| Developer | `@author1` |
-| Developer | `@author2` |
+| Developer | [@mohamed-adam-jemal](https://github.com/mohamed-adam-jemal) |
+| Developer | [@kiraaziz](https://github.com/kiraaziz) |
 
 ---
 
