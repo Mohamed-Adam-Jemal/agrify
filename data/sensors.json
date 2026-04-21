@@ -1,0 +1,65 @@
+{
+  "sensors": [
+    {
+      "id": "s1",
+      "zone": "Zone A",
+      "type": "soil_moisture",
+      "value": 62,
+      "unit": "%",
+      "status": "ok"
+    },
+    {
+      "id": "s2",
+      "zone": "Zone B",
+      "type": "soil_moisture",
+      "value": 38,
+      "unit": "%",
+      "status": "warning"
+    },
+    {
+      "id": "s3",
+      "zone": "Zone C",
+      "type": "temperature",
+      "value": 31,
+      "unit": "°C",
+      "status": "ok"
+    },
+    {
+      "id": "s4",
+      "zone": "Zone D",
+      "type": "humidity",
+      "value": 55,
+      "unit": "%",
+      "status": "ok"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "a1",
+      "severity": "warning",
+      "message": "Zone B soil moisture below threshold",
+      "ts": "2026-04-20T07:14:00Z"
+    },
+    {
+      "id": "a2",
+      "severity": "info",
+      "message": "Scheduled irrigation completed — Zone A",
+      "ts": "2026-04-20T06:00:00Z"
+    },
+    {
+      "id": "a3",
+      "severity": "error",
+      "message": "Sensor s5 offline — Zone D north",
+      "ts": "2026-04-20T05:30:00Z"
+    }
+  ],
+  
+  "water_log": [
+    { "zone": "Zone A", "date": "2026-04-14", "liters": 120 },
+    { "zone": "Zone B", "date": "2026-04-14", "liters": 85  },
+    { "zone": "Zone C", "date": "2026-04-15", "liters": 200 },
+    { "zone": "Zone D", "date": "2026-04-15", "liters": 60  },
+    { "zone": "Zone A", "date": "2026-04-16", "liters": 140 },
+    { "zone": "Zone B", "date": "2026-04-16", "liters": 95  }
+    ]
+}

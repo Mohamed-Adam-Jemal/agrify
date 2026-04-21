@@ -1,0 +1,111 @@
+/* ============================================================
+   main.css — Agrify global styles, layout, sidebar, topbar
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --green-primary: #2d6a4f;
+  --green-light:   #52b788;
+  --sidebar-bg:    #1b4332;
+  --sidebar-text:  #a7d4b8;
+  --bg:            #f4f7f4;
+  --bg-card:       #ffffff;
+  --text-primary:  #1a1a2e;
+  --text-muted:    #9ca3af;
+  --border:        #e5e7eb;
+  --radius:        14px;
+  --shadow:        0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+a { text-decoration: none; color: inherit; }
+
+/* ---------- App shell ---------- */
+body  { display: flex; height: 100vh; overflow: hidden; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ---------- Page area ---------- */
+.pages       { flex: 1; overflow-y: auto; padding: 28px 32px; }
+.page        { display: none; }
+.page.active { display: block; animation: fadeIn 0.2s ease; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: 220px;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 12px;
+  gap: 8px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  padding: 0 10px 24px;
+}
+
+nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sidebar-text);
+  transition: background 0.15s, color 0.15s;
+}
+.nav-item:hover  { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.nav-item.active { background: var(--green-light); color: #fff; font-weight: 600; }
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--sidebar-text);
+  padding: 16px 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar h1 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+.topbar p  { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

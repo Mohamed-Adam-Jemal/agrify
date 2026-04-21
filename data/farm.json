@@ -1,0 +1,11 @@
+{
+  "name": "Green Valley Farm",
+  "location": "Sfax, Tunisia",
+  "timezone": "Africa/Tunis",
+  "weather": {
+    "temp": 28,
+    "unit": "C",
+    "condition": "Sunny"
+  },
+  "zones": ["Zone A — Wheat", "Zone B — Olives", "Zone C — Citrus", "Zone D — Vegetables"]
+}
