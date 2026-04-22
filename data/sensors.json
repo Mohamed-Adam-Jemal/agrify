@@ -1,0 +1,47 @@
+[
+  {
+    "id": "s1",
+    "type": "Temperature",
+    "zone": "zone_A",
+    "value": 24.5,
+    "unit": "°C",
+    "status": "active",
+    "updatedAt": "2024-01-20T10:00:00Z"
+  },
+  {
+    "id": "s2",
+    "type": "Soil Moisture",
+    "zone": "zone_A",
+    "value": 65,
+    "unit": "%",
+    "status": "active",
+    "updatedAt": "2024-01-20T09:58:00Z"
+  },
+  {
+    "id": "s3",
+    "type": "Humidity",
+    "zone": "zone_B",
+    "value": 72,
+    "unit": "%",
+    "status": "active",
+    "updatedAt": "2024-01-20T09:55:00Z"
+  },
+  {
+    "id": "s4",
+    "type": "Soil Moisture",
+    "zone": "zone_B",
+    "value": 12,
+    "unit": "%",
+    "status": "critical",
+    "updatedAt": "2024-01-20T09:57:00Z"
+  },
+  {
+    "id": "s5",
+    "type": "Temperature",
+    "zone": "zone_C",
+    "value": 22.1,
+    "unit": "°C",
+    "status": "active",
+    "updatedAt": "2024-01-20T09:59:00Z"
+  }
+]

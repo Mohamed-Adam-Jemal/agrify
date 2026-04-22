@@ -1,9 +1,10 @@
 <div class="dashboard-container">
+
   <!-- KPI Cards -->
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-icon green">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="4"/>
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
         </svg>
@@ -12,11 +13,14 @@
         <span class="kpi-label">Active Sensors</span>
         <span class="kpi-value" id="active-sensors">--</span>
       </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
     </div>
 
     <div class="kpi-card">
       <div class="kpi-icon blue">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
           <polyline points="7.5 11 12 14 16.5 11"/>
         </svg>
@@ -25,11 +29,14 @@
         <span class="kpi-label">Stock Items</span>
         <span class="kpi-value" id="total-stock">--</span>
       </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
     </div>
 
     <div class="kpi-card">
       <div class="kpi-icon orange">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
         </svg>
       </div>
@@ -37,11 +44,14 @@
         <span class="kpi-label">Active Crops</span>
         <span class="kpi-value" id="active-crops">--</span>
       </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
     </div>
 
     <div class="kpi-card">
       <div class="kpi-icon red">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
@@ -50,28 +60,42 @@
         <span class="kpi-label">Active Alerts</span>
         <span class="kpi-value" id="alert-count">--</span>
       </div>
+      <div class="kpi-trend down">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
     </div>
   </div>
 
   <!-- Sensor Readings -->
   <div class="card full-width">
     <div class="card-header">
-      <h3>Live Sensor Readings</h3>
-      <span class="badge" id="sensor-timestamp">Loading...</span>
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h3>Live Sensor Readings</h3>
+      </div>
+      <span class="timestamp-badge" id="sensor-timestamp">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Loading...
+      </span>
     </div>
     <div class="sensors-table-container">
       <table class="sensors-table">
         <thead>
           <tr>
-            <th>Sensor Type</th>
-            <th>Current Value</th>
+            <th>Sensor</th>
+            <th>Value</th>
             <th>Unit</th>
             <th>Status</th>
-            <th>Last Updated</th>
+            <th>Updated</th>
           </tr>
         </thead>
         <tbody id="sensors-table-body">
-          <tr><td colspan="5">📭 Loading sensor data...</td></tr>
+          <tr><td colspan="5"><div class="table-empty">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Loading sensor data...
+          </div></td></tr>
         </tbody>
       </table>
     </div>
@@ -81,57 +105,72 @@
   <div class="two-columns">
     <div class="card">
       <div class="card-header">
-        <h3>Recent Alerts</h3>
-        <a href="#alerts" class="view-all">View all →</a>
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h3>Recent Alerts</h3>
+        </div>
+        <a href="#alerts" class="view-all">
+          View all
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
       </div>
       <div class="alerts-list" id="recent-alerts">
-        <div class="alert-placeholder">Loading alerts...</div>
+        <div class="alert-placeholder">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Loading alerts...
+        </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h3>Quick Actions</h3>
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>Quick Actions</h3>
+        </div>
       </div>
       <div class="quick-actions">
         <button class="action-btn" onclick="window.location.hash='stock'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="18" rx="2"/>
-            <path d="M20 7L4 7"/>
-            <path d="M20 12L4 12"/>
-            <path d="M20 17L4 17"/>
-          </svg>
-          Update Stock
+          <div class="action-btn-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <span>Update Stock</span>
         </button>
         <button class="action-btn" onclick="window.location.hash='production'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          Log Production
+          <div class="action-btn-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <span>Log Production</span>
         </button>
         <button class="action-btn" onclick="window.location.hash='analytics'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="20" x2="18" y2="10"/>
-            <line x1="12" y1="20" x2="12" y2="4"/>
-            <line x1="6" y1="20" x2="6" y2="14"/>
-          </svg>
-          View Analytics
+          <div class="action-btn-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <span>View Analytics</span>
         </button>
         <button class="action-btn" onclick="window.location.hash='map'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          View Map
+          <div class="action-btn-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <span>View Map</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Farm Details -->
+  <!-- Farm Overview -->
   <div class="card full-width">
     <div class="card-header">
-      <h3>Farm Overview</h3>
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Farm Overview</h3>
+      </div>
     </div>
     <div class="farm-info-grid" id="farm-details">
       <div class="loading">Loading farm data...</div>
@@ -141,189 +180,142 @@
 
 <script>
   (function() {
-    console.log('📊 Dashboard initializing...');
-    
-    function updateDashboard(data) {
-      const { stock, production, alerts, analytics } = data;
-      
-      // FIX 3: Populate Active Sensors from soilHealth zones.
-      // Each zone contributes 2 sensors (temperature + soil moisture).
-      if (analytics && analytics.soilHealth && analytics.soilHealth.length > 0) {
-        const sensorCount = analytics.soilHealth.length * 2;
-        document.getElementById('active-sensors').textContent = sensorCount;
-      } else {
-        document.getElementById('active-sensors').textContent = '0';
-      }
+    console.log('Dashboard initializing...');
 
-      if (stock) {
-        document.getElementById('total-stock').textContent = stock.length || '0';
-      }
-      
+    const SEVERITY_ICONS = {
+      critical: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      warning:  `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+      info:     `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+    };
+
+    const FARM_ICONS = {
+      name:       `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+      location:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+      area:       `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,
+      soil:       `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`,
+      irrigation: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>`,
+      season:     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>`,
+    };
+
+    function statusPill(status) {
+      const labels = { active: 'Active', warning: 'Warning', critical: 'Critical' };
+      return `<span class="status-pill status-pill-${status}"><span class="status-dot"></span>${labels[status] || status}</span>`;
+    }
+
+    function updateDashboard(data) {
+      const { stock, production, alerts, analytics, sensors, farm } = data; // ← add sensors, farm
+
+      // Active Sensors — now from sensors.json count
+      document.getElementById('active-sensors').textContent = sensors ? sensors.length : '0';
+
+      if (stock) document.getElementById('total-stock').textContent = stock.length || '0';
+
       if (production) {
-        const activeCrops = production.filter(crop => crop.status === 'growing' || crop.status === 'planted').length;
+        const activeCrops = production.filter(c => c.status === 'growing' || c.status === 'planted').length;
         document.getElementById('active-crops').textContent = activeCrops;
       }
-      
+
       if (alerts) {
-        const activeAlerts = alerts.filter(alert => alert.status === 'active').length;
+        const activeAlerts = alerts.filter(a => a.status === 'active').length;
         document.getElementById('alert-count').textContent = activeAlerts;
-        
+
         const badge = document.getElementById('alert-badge');
         if (badge) {
           badge.textContent = activeAlerts;
           badge.style.display = activeAlerts > 0 ? 'inline-block' : 'none';
         }
-        
+
         const recentAlertsDiv = document.getElementById('recent-alerts');
-        const recentAlerts = alerts.slice(0, 3);
-        
-        if (recentAlerts.length === 0) {
-          recentAlertsDiv.innerHTML = '<div class="alert-placeholder">✅ No active alerts</div>';
+        const recent = alerts.slice(0, 3);
+
+        if (recent.length === 0) {
+          recentAlertsDiv.innerHTML = `<div class="alert-placeholder">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            No active alerts
+          </div>`;
         } else {
-          recentAlertsDiv.innerHTML = recentAlerts.map(alert => `
+          recentAlertsDiv.innerHTML = recent.map(alert => `
             <div class="alert-item alert-${alert.severity}">
-              <div class="alert-icon">
-                ${alert.severity === 'critical' ? '🔴' : alert.severity === 'warning' ? '🟡' : '🔵'}
+              <div class="alert-icon-wrap alert-icon-${alert.severity}">
+                ${SEVERITY_ICONS[alert.severity] || SEVERITY_ICONS.info}
               </div>
               <div class="alert-content">
                 <div class="alert-message">${alert.message}</div>
-                <div class="alert-time">${new Date(alert.timestamp).toLocaleString()}</div>
+                <div class="alert-meta">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  ${new Date(alert.timestamp).toLocaleString()}
+                </div>
               </div>
             </div>
           `).join('');
         }
       }
+
+      updateSensorReadings(sensors);          // ← pass sensors directly
+      updateFarmDetails(production, analytics, farm); // ← pass farm
       
-      updateSensorReadings(analytics);
-      updateFarmDetails(production, analytics);
-      document.getElementById('sensor-timestamp').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+      document.getElementById('sensor-timestamp').innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Updated ${new Date().toLocaleTimeString()}`;
     }
-    
-    function updateSensorReadings(analytics) {
+
+    // ✅ Now reads from sensors.json — no more random values
+    function updateSensorReadings(sensors) {
       const tbody = document.getElementById('sensors-table-body');
-      
-      if (analytics && analytics.soilHealth && analytics.soilHealth.length > 0) {
-        const zones = analytics.soilHealth;
-        const sensors = [];
-        
-        zones.forEach((zone) => {
-          sensors.push({
-            type: `Temperature - ${zone.zone}`,
-            value: (20 + Math.random() * 10).toFixed(1),
-            unit: '°C',
-            status: 'active'
-          });
-          sensors.push({
-            type: `Soil Moisture - ${zone.zone}`,
-            value: Math.floor(30 + Math.random() * 50),
-            unit: '%',
-            status: zone.nitrogen > 40 ? 'active' : 'warning'
-          });
-        });
-        
-        tbody.innerHTML = sensors.slice(0, 5).map(sensor => `
-          <tr>
-            <td><strong>${sensor.type}</strong></td>
-            <td style="color: ${sensor.status === 'active' ? '#10b981' : '#f59e0b'};">
-              <strong>${sensor.value}</strong>
-            </td>
-            <td>${sensor.unit}</td>
-            <td>
-              <span class="status-${sensor.status}">
-                ${sensor.status === 'active' ? '🟢 Active' : '🟡 Warning'}
-              </span>
-            </td>
-            <td>Just now</td>
-          </tr>
-        `).join('');
-      } else {
-        tbody.innerHTML = `
-          <tr>
-            <td><strong>Temperature Sensor A</strong></td>
-            <td style="color: #10b981;"><strong>24.5</strong></td>
-            <td>°C</td>
-            <td><span class="status-active">🟢 Active</span></td>
-            <td>Just now</td>
-          </tr>
-          <tr>
-            <td><strong>Soil Moisture - Zone A</strong></td>
-            <td style="color: #3b82f6;"><strong>65</strong></td>
-            <td>%</td>
-            <td><span class="status-active">🟢 Active</span></td>
-            <td>2 min ago</td>
-          </tr>
-          <tr>
-            <td><strong>Humidity Sensor</strong></td>
-            <td><strong>72</strong></td>
-            <td>%</td>
-            <td><span class="status-active">🟢 Active</span></td>
-            <td>5 min ago</td>
-          </tr>
-          <tr>
-            <td><strong>Soil Moisture - Zone B</strong></td>
-            <td style="color: #ef4444;"><strong>12</strong></td>
-            <td>%</td>
-            <td><span class="status-critical">🔴 Critical</span></td>
-            <td>3 min ago</td>
-          </tr>
-        `;
+
+      if (!sensors || sensors.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="table-empty">No sensor data available</div></td></tr>`;
+        return;
       }
+
+      tbody.innerHTML = sensors.map(s => `
+        <tr>
+          <td>
+            <div class="sensor-name-cell">
+              <span class="sensor-type">${s.type}</span>
+              <span class="sensor-zone">${s.zone}</span>
+            </div>
+          </td>
+          <td class="sensor-value sensor-value-${s.status}">${s.value}</td>
+          <td class="sensor-unit">${s.unit}</td>
+          <td>${statusPill(s.status)}</td>
+          <td class="sensor-time">${new Date(s.updatedAt).toLocaleTimeString()}</td>
+        </tr>
+      `).join('');
     }
-    
-    function updateFarmDetails(production, analytics) {
-      const farmDetailsDiv = document.getElementById('farm-details');
-      
-      let totalArea = 0;
-      if (production && production.length > 0) {
-        totalArea = production.reduce((sum, crop) => sum + (crop.area || 0), 0);
-      }
-      
+
+    // ✅ Now reads Farm Name, Location, Irrigation from farm.json
+    function updateFarmDetails(production, analytics, farm) {
+      const div = document.getElementById('farm-details');
+
+      const totalArea = production
+        ? production.reduce((sum, c) => sum + (c.area || 0), 0)
+        : 0;
+
       let soilType = 'Loamy';
       if (analytics && analytics.soilHealth && analytics.soilHealth.length > 0) {
-        const avgPH = analytics.soilHealth.reduce((sum, zone) => sum + zone.ph, 0) / analytics.soilHealth.length;
-        if (avgPH < 6.5) soilType = 'Slightly Acidic';
-        else if (avgPH > 7.5) soilType = 'Slightly Alkaline';
-        else soilType = 'Neutral Loamy';
+        const avgPH = analytics.soilHealth.reduce((s, z) => s + z.ph, 0) / analytics.soilHealth.length;
+        soilType = avgPH < 6.5 ? 'Slightly Acidic' : avgPH > 7.5 ? 'Slightly Alkaline' : 'Neutral Loamy';
       }
-      
-      farmDetailsDiv.innerHTML = `
+
+      const items = [
+        { icon: FARM_ICONS.name,       label: 'Farm Name',  value: farm?.name       || 'N/A' },
+        { icon: FARM_ICONS.location,   label: 'Location',   value: farm?.location   || 'N/A' },
+        { icon: FARM_ICONS.area,       label: 'Total Area', value: `${totalArea} ha` },
+        { icon: FARM_ICONS.soil,       label: 'Soil Type',  value: soilType },
+        { icon: FARM_ICONS.irrigation, label: 'Irrigation', value: farm?.irrigation || 'N/A' },
+        { icon: FARM_ICONS.season,     label: 'Season',     value: new Date().getMonth() < 6 ? 'Spring / Summer' : 'Fall / Winter' },
+      ];
+
+      div.innerHTML = items.map(item => `
         <div class="farm-info-item">
-          <span class="farm-label">🌾 Farm Name</span>
-          <span class="farm-value">Green Valley Farm</span>
+          <span class="farm-label">${item.icon} ${item.label}</span>
+          <span class="farm-value">${item.value}</span>
         </div>
-        <div class="farm-info-item">
-          <span class="farm-label">📍 Location</span>
-          <span class="farm-value">California, USA</span>
-        </div>
-        <div class="farm-info-item">
-          <span class="farm-label">📏 Total Area</span>
-          <span class="farm-value">${totalArea} hectares</span>
-        </div>
-        <div class="farm-info-item">
-          <span class="farm-label">🌱 Soil Type</span>
-          <span class="farm-value">${soilType}</span>
-        </div>
-        <div class="farm-info-item">
-          <span class="farm-label">💧 Irrigation</span>
-          <span class="farm-value">Drip System</span>
-        </div>
-        <div class="farm-info-item">
-          <span class="farm-label">🌡️ Season</span>
-          <span class="farm-value">${new Date().getMonth() < 6 ? 'Spring/Summer' : 'Fall/Winter'}</span>
-        </div>
-      `;
+      `).join('');
     }
-    
-    window.addEventListener('dashboardDataLoaded', (event) => {
-      console.log('📊 Dashboard received data:', event.detail);
-      updateDashboard(event.detail);
-    });
-    
-    // Fallback: if event already fired before listener attached
-    setTimeout(() => {
-      if (window._dashboardData) {
-        updateDashboard(window._dashboardData);
-      }
-    }, 100);
+
+    window.addEventListener('dashboardDataLoaded', e => updateDashboard(e.detail));
+    setTimeout(() => { if (window._dashboardData) updateDashboard(window._dashboardData); }, 100);
   })();
 </script>

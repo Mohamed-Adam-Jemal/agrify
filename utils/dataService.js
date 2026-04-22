@@ -9,11 +9,15 @@ export async function initDataService() {
     loadProductionData(),
     loadAlertsData(),
     loadAnalyticsData(),
-    loadZonesData()
+    loadZonesData(),
+    loadFarmData(),      
+    loadSensorsData()   
   ]);
 
+
+
   results.forEach((result, i) => {
-    const names = ['stock', 'production', 'alerts', 'analytics', 'zones'];
+    const names = ['stock', 'production', 'alerts', 'analytics', 'zones', 'farm', 'sensors'];
     if (result.status === 'rejected') {
       console.error(`❌ Failed to load ${names[i]}:`, result.reason);
     }
@@ -63,6 +67,28 @@ async function loadZonesData() {
     dataCache.zones = await safeFetch('./data/zones.json');
   }
   return dataCache.zones;
+}
+
+async function loadFarmData() {
+  if (!dataCache.farm) {
+    dataCache.farm = await safeFetch('./data/farm.json');
+  }
+  return dataCache.farm;
+}
+
+async function loadSensorsData() {
+  if (!dataCache.sensors) {
+    dataCache.sensors = await safeFetch('./data/sensors.json');
+  }
+  return dataCache.sensors;
+}
+
+export async function getFarmData() {
+  return await loadFarmData();
+}
+
+export async function getSensorsData() {
+  return await loadSensorsData();
 }
 
 // Public API

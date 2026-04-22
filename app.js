@@ -5,7 +5,9 @@ import {
   getStockData,
   getProductionData,
   getAnalyticsData,
-  getZonesData
+  getZonesData,
+  getFarmData,    // ← add
+  getSensorsData  // ← add
 } from './utils/dataService.js';
 
 const PAGES = {
@@ -96,36 +98,19 @@ async function initializePageData(page) {
   
   try {
     if (page === 'dashboard') {
-      const [stock, production, alerts, analytics] = await Promise.all([
+      const [stock, production, alerts, analytics, farm, sensors] = await Promise.all([
         getStockData(),
         getProductionData(),
         getActiveAlerts(),
-        getAnalyticsData()
+        getAnalyticsData(),
+        getFarmData(),    // ← add
+        getSensorsData()  // ← add
       ]);
-      const data = { stock, production, alerts, analytics };
+      const data = { stock, production, alerts, analytics, farm, sensors };
       window._dashboardData = data;
       window.dispatchEvent(new CustomEvent('dashboardDataLoaded', { detail: data }));
     }
-    else if (page === 'stock') {
-      const stock = await getStockData();
-      window.dispatchEvent(new CustomEvent('stockDataLoaded', { detail: stock }));
-    }
-    else if (page === 'production') {
-      const production = await getProductionData();
-      window.dispatchEvent(new CustomEvent('productionDataLoaded', { detail: production }));
-    }
-    else if (page === 'alerts') {
-      const alerts = await getActiveAlerts();
-      window.dispatchEvent(new CustomEvent('alertsDataLoaded', { detail: alerts }));
-    }
-    else if (page === 'analytics') {
-      const analytics = await getAnalyticsData();
-      window.dispatchEvent(new CustomEvent('analyticsDataLoaded', { detail: analytics }));
-    }
-    else if (page === 'map') {
-      const zones = await getZonesData();
-      window.dispatchEvent(new CustomEvent('mapDataLoaded', { detail: zones }));
-    }
+
   } catch (err) {
     console.error(`Failed to load data for ${page}:`, err);
   }
