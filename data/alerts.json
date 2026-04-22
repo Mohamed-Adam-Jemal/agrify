@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "type": "low_stock",
+    "severity": "warning",
+    "message": "Pesticide stock is below threshold (45L / 50L min)",
+    "timestamp": "2024-01-20T08:30:00Z",
+    "status": "active",
+    "entityId": 5,
+    "entityType": "stock"
+  },
+  {
+    "id": 2,
+    "type": "irrigation",
+    "severity": "critical",
+    "message": "Zone A soil moisture critically low (12%)",
+    "timestamp": "2024-01-20T10:15:00Z",
+    "status": "active",
+    "entityId": "zone_A",
+    "entityType": "zone"
+  },
+  {
+    "id": 3,
+    "type": "weather",
+    "severity": "warning",
+    "message": "Frost warning expected tonight",
+    "timestamp": "2024-01-19T16:00:00Z",
+    "status": "active",
+    "entityId": null,
+    "entityType": "weather"
+  },
+  {
+    "id": 4,
+    "type": "harvest",
+    "severity": "info",
+    "message": "Corn harvest ready in 5 days",
+    "timestamp": "2024-01-18T09:00:00Z",
+    "status": "acknowledged",
+    "entityId": 2,
+    "entityType": "production"
+  },
+  {
+    "id": 5,
+    "type": "equipment",
+    "severity": "critical",
+    "message": "Irrigation pump malfunction in Zone B",
+    "timestamp": "2024-01-20T07:45:00Z",
+    "status": "active",
+    "entityId": "pump_001",
+    "entityType": "equipment"
+  }
+]

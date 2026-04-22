@@ -1,0 +1,53 @@
+{
+  "waterUsage": {
+    "daily": [
+      { "date": "2024-01-14", "usage": 2450 },
+      { "date": "2024-01-15", "usage": 2580 },
+      { "date": "2024-01-16", "usage": 2620 },
+      { "date": "2024-01-17", "usage": 2410 },
+      { "date": "2024-01-18", "usage": 2390 },
+      { "date": "2024-01-19", "usage": 2510 },
+      { "date": "2024-01-20", "usage": 2480 }
+    ],
+    "monthly": [
+      { "month": "Sep", "usage": 68400 },
+      { "month": "Oct", "usage": 71200 },
+      { "month": "Nov", "usage": 69800 },
+      { "month": "Dec", "usage": 65400 },
+      { "month": "Jan", "usage": 67300 }
+    ]
+  },
+  "yield": {
+    "current": {
+      "total": 4000,
+      "unit": "kg",
+      "comparison": 12.5
+    },
+    "byCrop": [
+      { "crop": "Corn", "yield": 2800, "area": 35, "efficiency": 80 },
+      { "crop": "Potatoes", "yield": 1200, "area": 15, "efficiency": 75 }
+    ],
+    "projected": {
+      "wheat": 3200,
+      "soybeans": 2800,
+      "tomatoes": 4500
+    }
+  },
+  "soilHealth": [
+    { "zone": "Zone A", "ph": 6.8, "nitrogen": 45, "phosphorus": 32, "potassium": 28 },
+    { "zone": "Zone B", "ph": 6.5, "nitrogen": 52, "phosphorus": 38, "potassium": 31 },
+    { "zone": "Zone C", "ph": 7.1, "nitrogen": 38, "phosphorus": 29, "potassium": 24 }
+  ],
+  "costAnalysis": {
+    "totalCost": 45600,
+    "breakdown": {
+      "seeds": 12400,
+      "fertilizers": 18700,
+      "pesticides": 5200,
+      "labor": 6800,
+      "equipment": 2500
+    },
+    "revenue": 78200,
+    "profit": 32600
+  }
+}

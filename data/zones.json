@@ -1,0 +1,42 @@
+[
+  {
+    "id": "zone_A",
+    "name": "North Field",
+    "area": 45,
+    "crop": "Wheat",
+    "soilMoisture": 42,
+    "temperature": 24,
+    "irrigationStatus": "active",
+    "coordinates": { "lat": 40.7128, "lng": -74.0060 }
+  },
+  {
+    "id": "zone_B",
+    "name": "East Valley",
+    "area": 35,
+    "crop": "Corn",
+    "soilMoisture": 12,
+    "temperature": 26,
+    "irrigationStatus": "critical",
+    "coordinates": { "lat": 40.7158, "lng": -74.0030 }
+  },
+  {
+    "id": "zone_C",
+    "name": "South Meadow",
+    "area": 40,
+    "crop": "Soybeans",
+    "soilMoisture": 58,
+    "temperature": 23,
+    "irrigationStatus": "inactive",
+    "coordinates": { "lat": 40.7100, "lng": -74.0080 }
+  },
+  {
+    "id": "zone_D",
+    "name": "West Garden",
+    "area": 10,
+    "crop": "Tomatoes",
+    "soilMoisture": 65,
+    "temperature": 25,
+    "irrigationStatus": "active",
+    "coordinates": { "lat": 40.7145, "lng": -74.0100 }
+  }
+]

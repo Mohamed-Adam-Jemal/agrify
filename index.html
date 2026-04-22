@@ -8,8 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles/main.css">
-  <link rel="stylesheet" href="styles/components.css">
+  <!-- Global styles -->
+  <link rel="stylesheet" href="./styles/main.css">
+  
+  <!-- Page-specific styles -->
+  <link rel="stylesheet" href="./styles/dashboard.css">
+
 </head>
 <body>
 
@@ -31,14 +35,6 @@
           <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
         </svg>
         Dashboard
-      </a>
-
-      <a href="#irrigation" class="nav-item" data-page="irrigation">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-        </svg>
-        Irrigation
       </a>
 
       <a href="#stock" class="nav-item" data-page="stock">
@@ -64,7 +60,7 @@
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
         Alerts
-        <span class="badge" id="alert-badge">3</span>
+        <span class="badge" id="alert-badge">0</span>
       </a>
 
       <a href="#analytics" class="nav-item" data-page="analytics">
@@ -123,12 +119,12 @@
       </div>
     </header>
 
-    <!-- ✅ Single outlet — pages load here -->
+    <!-- Single outlet — pages load here -->
     <div class="pages">
       <div id="page-outlet">Loading...</div>
     </div>
   </main>
 
-  <script src="app.js"></script>
+  <script src="./app.js" type="module"></script>
 </body>
 </html>

@@ -1,37 +1,57 @@
-{
-  "season": "Spring 2026",
-  "crops": [
-    {
-      "id": "c1",
-      "name": "Wheat",
-      "zone": "Zone A",
-      "planted": "2026-01-10",
-      "expected_harvest": "2026-06-15",
-      "progress": 68
-    },
-    {
-      "id": "c2",
-      "name": "Olives",
-      "zone": "Zone B",
-      "planted": "2025-10-01",
-      "expected_harvest": "2026-11-01",
-      "progress": 42
-    },
-    {
-      "id": "c3",
-      "name": "Clementine",
-      "zone": "Zone C",
-      "planted": "2026-02-20",
-      "expected_harvest": "2026-12-01",
-      "progress": 30
-    },
-    {
-      "id": "c4",
-      "name": "Tomatoes",
-      "zone": "Zone D",
-      "planted": "2026-03-05",
-      "expected_harvest": "2026-07-10",
-      "progress": 55
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "crop": "Wheat",
+    "area": 50,
+    "unit": "hectares",
+    "plantingDate": "2023-11-15",
+    "expectedHarvest": "2024-03-15",
+    "status": "growing",
+    "season": "winter",
+    "yield": null
+  },
+  {
+    "id": 2,
+    "crop": "Corn",
+    "area": 35,
+    "unit": "hectares",
+    "plantingDate": "2023-10-01",
+    "expectedHarvest": "2024-02-01",
+    "status": "harvested",
+    "season": "fall",
+    "yield": 2800
+  },
+  {
+    "id": 3,
+    "crop": "Soybeans",
+    "area": 40,
+    "unit": "hectares",
+    "plantingDate": "2024-01-05",
+    "expectedHarvest": "2024-05-05",
+    "status": "planted",
+    "season": "spring",
+    "yield": null
+  },
+  {
+    "id": 4,
+    "crop": "Tomatoes",
+    "area": 10,
+    "unit": "hectares",
+    "plantingDate": "2024-01-20",
+    "expectedHarvest": "2024-04-20",
+    "status": "growing",
+    "season": "spring",
+    "yield": null
+  },
+  {
+    "id": 5,
+    "crop": "Potatoes",
+    "area": 15,
+    "unit": "hectares",
+    "plantingDate": "2023-09-10",
+    "expectedHarvest": "2023-12-10",
+    "status": "harvested",
+    "season": "fall",
+    "yield": 1200
+  }
+]
