@@ -2,12 +2,13 @@
 import { 
   initDataService, 
   getActiveAlerts, 
+  getAllAlerts,
   getStockData,
   getProductionData,
   getAnalyticsData,
   getZonesData,
-  getFarmData,    // ← add
-  getSensorsData  // ← add
+  getFarmData,    
+  getSensorsData
 } from './utils/dataService.js';
 
 const PAGES = {
@@ -20,7 +21,6 @@ const PAGES = {
 };
 
 const outlet = document.getElementById('page-outlet');
-const loaded = {};
 
 // Re-execute <script> tags after injecting HTML into the DOM.
 // innerHTML does NOT run scripts — this clones and re-inserts them so they execute.
@@ -61,24 +61,15 @@ async function navigate(page) {
 
   await updateAlertBadge();
 
-  // Cached page
-  if (loaded[page]) {
-    outlet.innerHTML = loaded[page];
-    reinitScripts(outlet);               // scripts re-run → listeners register
-    await initializePageData(page);      // event fires → listeners catch it ✅
-    return;
-  }
-
-  // First load
+  // Always fetch fresh from disk — no caching
   try {
     outlet.innerHTML = `<div class="loading-spinner">Loading ${meta.title}...</div>`;
     const res = await fetch(`./pages/${page}.html`);
     if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
     const html = await res.text();
-    
-    loaded[page] = html;
+
     outlet.innerHTML = html;
-    reinitScripts(outlet);               // FIX: also needed on first load ✅
+    reinitScripts(outlet);
     await initializePageData(page);
   } catch (err) {
     console.error('Navigation error:', err);
@@ -103,12 +94,37 @@ async function initializePageData(page) {
         getProductionData(),
         getActiveAlerts(),
         getAnalyticsData(),
-        getFarmData(),    // ← add
-        getSensorsData()  // ← add
+        getFarmData(),    
+        getSensorsData()  
       ]);
       const data = { stock, production, alerts, analytics, farm, sensors };
       window._dashboardData = data;
       window.dispatchEvent(new CustomEvent('dashboardDataLoaded', { detail: data }));
+    }
+
+    else if (page === 'alerts') {
+      const alerts = await getAllAlerts();
+      window.dispatchEvent(new CustomEvent('alertsDataLoaded', { detail: alerts }));
+    }
+
+    else if (page === 'stock') {
+      const stock = await getStockData();
+      window.dispatchEvent(new CustomEvent('stockDataLoaded', { detail: stock }));
+    }
+
+    else if (page === 'production') {
+      const production = await getProductionData();
+      window.dispatchEvent(new CustomEvent('productionDataLoaded', { detail: production }));
+    }
+
+    else if (page === 'analytics') {
+      const analytics = await getAnalyticsData();
+      window.dispatchEvent(new CustomEvent('analyticsDataLoaded', { detail: analytics }));
+    }
+
+    else if (page === 'map') {
+      const zones = await getZonesData();
+      window.dispatchEvent(new CustomEvent('mapDataLoaded', { detail: zones }));
     }
 
   } catch (err) {
