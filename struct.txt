@@ -1,0 +1,29 @@
+.
+├── app.js
+├── data
+│   ├── alerts.json
+│   ├── analytics.json
+│   ├── farm.json
+│   ├── production.json
+│   ├── sensors.json
+│   ├── stock.json
+│   └── zones.json
+├── index.html
+├── LICENSE
+├── pages
+│   ├── alerts.html
+│   ├── analytics.html
+│   ├── dashboard.html
+│   ├── map.html
+│   ├── production.html
+│   └── stock.html
+├── README.md
+├── struct.txt
+├── styles
+│   ├── alerts.css
+│   ├── dashboard.css
+│   └── main.css
+└── utils
+    └── dataService.js
+
+5 directories, 22 files
