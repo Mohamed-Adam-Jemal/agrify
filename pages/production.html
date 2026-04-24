@@ -1,4 +1,471 @@
-<div class="page-content">
-  <h2>Production Tracking</h2>
-  <p>Planting and harvest log.</p>
+<!-- production.html — Agrify Production Page -->
+<div class="dashboard-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <h1 class="page-title">Production</h1>
+        <p class="page-subtitle">Crop lifecycle tracking &amp; yield management</p>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-log-production">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Log Production
+    </button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Active Crops</span>
+        <span class="kpi-value" id="kpi-active">3</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Area</span>
+        <span class="kpi-value" id="kpi-area">150 ha</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Yield</span>
+        <span class="kpi-value" id="kpi-yield">4,000 kg</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">vs Last Season</span>
+        <span class="kpi-value" id="kpi-comparison">+12.5%</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Cards Grid -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Crop Overview</h3>
+      </div>
+      <div class="filter-tabs" id="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="growing">Growing</button>
+        <button class="filter-tab" data-filter="planted">Planted</button>
+        <button class="filter-tab" data-filter="harvested">Harvested</button>
+      </div>
+    </div>
+    <div class="crop-cards-grid" id="crop-cards-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Two Column: Yield Chart + Projected -->
+  <div class="two-columns">
+
+    <!-- Harvested Yield -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3>Harvested Yield</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Season 2023–24
+        </span>
+      </div>
+      <div class="yield-chart-wrap" id="yield-chart">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Projected Yield -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Projected Yield</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          Upcoming
+        </span>
+      </div>
+      <div class="projected-list" id="projected-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Production Table -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <h3>All Crops</h3>
+      </div>
+      <span class="timestamp-badge" id="table-count">5 entries</span>
+    </div>
+    <div class="sensors-table-container">
+      <table class="sensors-table production-table">
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Season</th>
+            <th>Area</th>
+            <th>Planted</th>
+            <th>Expected Harvest</th>
+            <th>Yield</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="production-table-body">
+          <tr><td colspan="7"><div class="table-empty">Loading production data...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Log Production Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Log Production Entry</h3>
+        <button class="modal-close" id="modal-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Crop Name</label>
+            <input type="text" class="form-input" id="form-crop" placeholder="e.g. Wheat">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Season</label>
+            <select class="form-input" id="form-season">
+              <option value="spring">Spring</option>
+              <option value="summer">Summer</option>
+              <option value="fall">Fall</option>
+              <option value="winter">Winter</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Area (ha)</label>
+            <input type="number" class="form-input" id="form-area" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-input" id="form-status">
+              <option value="planted">Planted</option>
+              <option value="growing">Growing</option>
+              <option value="harvested">Harvested</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Planting Date</label>
+            <input type="date" class="form-input" id="form-planting-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expected Harvest</label>
+            <input type="date" class="form-input" id="form-harvest-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Yield (kg) <span class="form-optional">— leave blank if not yet harvested</span></label>
+          <input type="number" class="form-input" id="form-yield" placeholder="0">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-submit">Save Entry</button>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<script>
+(function () {
+
+  /* ── Data ── */
+  const production = [
+    { id: 1, crop: 'Wheat',    area: 50, unit: 'hectares', plantingDate: '2023-11-15', expectedHarvest: '2024-03-15', status: 'growing',   season: 'winter', yield: null },
+    { id: 2, crop: 'Corn',     area: 35, unit: 'hectares', plantingDate: '2023-10-01', expectedHarvest: '2024-02-01', status: 'harvested', season: 'fall',   yield: 2800 },
+    { id: 3, crop: 'Soybeans', area: 40, unit: 'hectares', plantingDate: '2024-01-05', expectedHarvest: '2024-05-05', status: 'planted',   season: 'spring', yield: null },
+    { id: 4, crop: 'Tomatoes', area: 10, unit: 'hectares', plantingDate: '2024-01-20', expectedHarvest: '2024-04-20', status: 'growing',   season: 'spring', yield: null },
+    { id: 5, crop: 'Potatoes', area: 15, unit: 'hectares', plantingDate: '2023-09-10', expectedHarvest: '2023-12-10', status: 'harvested', season: 'fall',   yield: 1200 },
+  ];
+
+  const analytics = {
+    yield: {
+      current: { total: 4000, unit: 'kg', comparison: 12.5 },
+      byCrop: [
+        { crop: 'Corn',     yield: 2800, area: 35, efficiency: 80 },
+        { crop: 'Potatoes', yield: 1200, area: 15, efficiency: 75 },
+      ],
+      projected: { wheat: 3200, soybeans: 2800, tomatoes: 4500 },
+    },
+  };
+
+  /* ── Crop icons by name ── */
+  const CROP_ICONS = {
+    Wheat:    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 12 7 9 7 5a5 5 0 0 1 10 0c0 4-5 7-5 7z"/><path d="M9 15l3-3 3 3"/></svg>`,
+    Corn:     `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M8 6c0 0 1 4 4 4s4-4 4-4M8 10c0 0 1 4 4 4s4-4 4-4M8 14c0 0 1 4 4 4s4-4 4-4"/></svg>`,
+    Soybeans: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v10M8 16h8"/></svg>`,
+    Tomatoes: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 6V3M9 5c0 0 0-2 3-2s3 2 3 2"/></svg>`,
+    Potatoes: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="13" rx="7" ry="5"/><path d="M12 8V5M9 7c1-2 5-2 6 0"/></svg>`,
+  };
+
+  const defaultIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`;
+
+  const STATUS_COLORS = { growing: 'green', planted: 'blue', harvested: 'orange' };
+  const SEASON_COLORS = { winter: '#3b82f6', fall: '#f59e0b', spring: '#10b981', summer: '#f97316' };
+
+  /* ── Helpers ── */
+  function statusPill(status) {
+    const labels = { growing: 'Growing', planted: 'Planted', harvested: 'Harvested' };
+    const color  = STATUS_COLORS[status] || 'blue';
+    return `<span class="status-pill status-pill-prod-${color}"><span class="status-dot"></span>${labels[status] || status}</span>`;
+  }
+
+  function fmtDate(str) {
+    if (!str) return '—';
+    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function daysUntil(str) {
+    if (!str) return null;
+    const diff = Math.ceil((new Date(str) - new Date()) / 86400000);
+    return diff;
+  }
+
+  function progressDays(planting, harvest) {
+    const start = new Date(planting).getTime();
+    const end   = new Date(harvest).getTime();
+    const now   = Date.now();
+    if (now >= end) return 100;
+    if (now <= start) return 0;
+    return Math.round(((now - start) / (end - start)) * 100);
+  }
+
+  /* ── Render crop cards ── */
+  function renderCropCards(filter) {
+    const grid   = document.getElementById('crop-cards-grid');
+    const items  = filter === 'all' ? production : production.filter(p => p.status === filter);
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="crop-empty">No crops with status "${filter}"</div>`;
+      return;
+    }
+
+    grid.innerHTML = items.map(p => {
+      const days    = daysUntil(p.expectedHarvest);
+      const prog    = progressDays(p.plantingDate, p.expectedHarvest);
+      const icon    = CROP_ICONS[p.crop] || defaultIcon;
+      const daysStr = p.status === 'harvested'
+        ? `<span class="crop-harvested-tag">Harvested</span>`
+        : days !== null
+          ? (days > 0 ? `<span class="crop-days">${days}d to harvest</span>` : `<span class="crop-days overdue">Overdue by ${Math.abs(days)}d</span>`)
+          : '';
+
+      return `
+        <div class="crop-card crop-card-${STATUS_COLORS[p.status]}">
+          <div class="crop-card-top">
+            <div class="crop-card-icon crop-icon-${STATUS_COLORS[p.status]}">${icon}</div>
+            <div class="crop-card-meta">
+              ${statusPill(p.status)}
+              <span class="crop-season-tag" style="background:${SEASON_COLORS[p.season]}22;color:${SEASON_COLORS[p.season]}">${p.season.charAt(0).toUpperCase()+p.season.slice(1)}</span>
+            </div>
+          </div>
+          <div class="crop-card-body">
+            <h4 class="crop-name">${p.crop}</h4>
+            <div class="crop-stats">
+              <div class="crop-stat">
+                <span class="crop-stat-label">Area</span>
+                <span class="crop-stat-val">${p.area} ha</span>
+              </div>
+              <div class="crop-stat">
+                <span class="crop-stat-label">Planted</span>
+                <span class="crop-stat-val">${fmtDate(p.plantingDate)}</span>
+              </div>
+              <div class="crop-stat">
+                <span class="crop-stat-label">${p.status === 'harvested' ? 'Yield' : 'Est. Harvest'}</span>
+                <span class="crop-stat-val">${p.status === 'harvested' ? (p.yield ? p.yield.toLocaleString() + ' kg' : '—') : fmtDate(p.expectedHarvest)}</span>
+              </div>
+            </div>
+          </div>
+          ${p.status !== 'harvested' ? `
+          <div class="crop-card-footer">
+            <div class="crop-progress-label">
+              <span>Growth Progress</span>
+              <span>${prog}%</span>
+            </div>
+            <div class="crop-progress-track">
+              <div class="crop-progress-bar crop-bar-${STATUS_COLORS[p.status]}" style="width:${prog}%"></div>
+            </div>
+            <div class="crop-days-row">${daysStr}</div>
+          </div>` : `
+          <div class="crop-card-footer harvested-footer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Harvest complete — ${fmtDate(p.expectedHarvest)}
+          </div>`}
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Render yield bar chart ── */
+  function renderYieldChart() {
+    const wrap   = document.getElementById('yield-chart');
+    const data   = analytics.yield.byCrop;
+    const maxVal = Math.max(...data.map(d => d.yield));
+
+    wrap.innerHTML = `
+      <div class="yield-chart">
+        ${data.map((d, i) => `
+          <div class="yield-bar-row">
+            <div class="yield-bar-label">${d.crop}</div>
+            <div class="yield-bar-track">
+              <div class="yield-bar-fill yield-bar-fill-${i}" style="width:${(d.yield/maxVal*100).toFixed(1)}%">
+                <span class="yield-bar-val">${d.yield.toLocaleString()} kg</span>
+              </div>
+            </div>
+            <div class="yield-bar-eff">
+              <span class="eff-pill">${d.efficiency}% eff.</span>
+            </div>
+          </div>
+        `).join('')}
+        <div class="yield-summary">
+          <div class="yield-summary-item">
+            <span class="yield-summary-label">Total Harvested</span>
+            <span class="yield-summary-val">${analytics.yield.current.total.toLocaleString()} kg</span>
+          </div>
+          <div class="yield-summary-item">
+            <span class="yield-summary-label">vs Last Season</span>
+            <span class="yield-summary-val positive">+${analytics.yield.current.comparison}%</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ── Render projected yield ── */
+  function renderProjected() {
+    const list = document.getElementById('projected-list');
+    const proj = analytics.yield.projected;
+    const maxP = Math.max(...Object.values(proj));
+
+    const colors = { wheat: '#3b82f6', soybeans: '#10b981', tomatoes: '#f97316' };
+
+    list.innerHTML = `<div class="projected-wrap">` +
+      Object.entries(proj).map(([crop, val]) => `
+        <div class="projected-item">
+          <div class="projected-item-top">
+            <div class="projected-crop-dot" style="background:${colors[crop] || '#94a3b8'}"></div>
+            <span class="projected-crop-name">${crop.charAt(0).toUpperCase()+crop.slice(1)}</span>
+            <span class="projected-val">${val.toLocaleString()} kg</span>
+          </div>
+          <div class="projected-track">
+            <div class="projected-fill" style="width:${(val/maxP*100).toFixed(1)}%;background:${colors[crop] || '#94a3b8'}"></div>
+          </div>
+        </div>`).join('') +
+      `<div class="projected-total">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Projected season total: <strong>${Object.values(proj).reduce((a,b)=>a+b,0).toLocaleString()} kg</strong>
+      </div>
+    </div>`;
+  }
+
+  /* ── Render full table ── */
+  function renderTable() {
+    const tbody = document.getElementById('production-table-body');
+    tbody.innerHTML = production.map(p => `
+      <tr>
+        <td>
+          <div class="prod-crop-cell">
+            <div class="prod-crop-icon">${CROP_ICONS[p.crop] || defaultIcon}</div>
+            <span class="sensor-type">${p.crop}</span>
+          </div>
+        </td>
+        <td><span class="season-tag" style="background:${SEASON_COLORS[p.season]}18;color:${SEASON_COLORS[p.season]};border:1px solid ${SEASON_COLORS[p.season]}40">${p.season}</span></td>
+        <td class="sensor-unit">${p.area} ha</td>
+        <td class="sensor-time">${fmtDate(p.plantingDate)}</td>
+        <td class="sensor-time">${fmtDate(p.expectedHarvest)}</td>
+        <td class="sensor-value ${p.yield ? 'sensor-value-active' : 'sensor-value-na'}">${p.yield ? p.yield.toLocaleString() + ' kg' : '—'}</td>
+        <td>${statusPill(p.status)}</td>
+      </tr>`).join('');
+  }
+
+  /* ── Filter tabs ── */
+  document.getElementById('filter-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-tab');
+    if (!btn) return;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCropCards(btn.dataset.filter);
+  });
+
+  /* ── Modal ── */
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('btn-log-production').addEventListener('click', () => overlay.classList.add('open'));
+  document.getElementById('modal-close').addEventListener('click',          () => overlay.classList.remove('open'));
+  document.getElementById('btn-cancel').addEventListener('click',           () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('btn-submit').addEventListener('click', () => {
+    overlay.classList.remove('open');
+    // In production, would POST to API and refresh data
+  });
+
+  /* ── Init ── */
+  renderCropCards('all');
+  renderYieldChart();
+  renderProjected();
+  renderTable();
+
+})();
+</script>
