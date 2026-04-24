@@ -15,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 
 public class MainView extends BorderPane {
 
@@ -86,17 +85,22 @@ public class MainView extends BorderPane {
     private HBox buildCard(CelestialBody item, boolean selected) {
         // ── Image ────────────────────────────────────────────
         ImageView img = new ImageView();
-        img.setFitWidth(40);
-        img.setFitHeight(40);
-        img.setPreserveRatio(true);
+        img.setFitWidth(34);
+        img.setFitHeight(34);
+        img.setPreserveRatio(true);    // respect natural ratio — fixes Saturn distortion
         try {
-            Image image = PlanetAssets.loadImage(item.getName(), 40, 40);
+            Image image = PlanetAssets.loadImage(item.getName(), 44, 44);
             if (image != null) img.setImage(image);
         } catch (Exception ignored) {}
-        img.setClip(new Circle(20, 20, 20));
+        // No circle clip — irregular shapes like Saturn need room to breathe
 
+        // Fixed container keeps all cards the same height regardless of image shape
         StackPane imgWrap = new StackPane(img);
-        imgWrap.getStyleClass().add("img-wrap");
+        imgWrap.setMinSize(44, 44);
+        imgWrap.setMaxSize(44, 44);
+        imgWrap.setPrefSize(44, 44);
+        imgWrap.setStyle("-fx-background-color: transparent;");
+        imgWrap.setAlignment(Pos.CENTER);
 
         // ── Name ─────────────────────────────────────────────
         Label name = new Label(item.getName());
