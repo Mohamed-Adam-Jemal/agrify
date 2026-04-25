@@ -4,69 +4,219 @@
     "type": "Planet",
     "distanceFromSun": 0.39,
     "radiusKm": 2439.7,
-    "description": "Smallest planet, closest to the Sun."
+    "massKg": 3.30e+23,
+    "orbitalPeriodDays": 88,
+    "rotationPeriodDays": 58.6,
+    "orbitalSpeedFactor": 4.15,
+    "color": "#b5b5b5",
+    "displayRadius": 4,
+    "description": "Smallest planet, closest to the Sun.",
+    "surfaceTemperatureC": { "min": -180, "max": 430 },
+    "moons": 0,
+    "hasRings": false,
+    "gravity": 3.7,
+    "funFacts": [
+      "A year on Mercury is just 88 Earth days.",
+      "Despite being closest to the Sun, it is not the hottest planet.",
+      "Mercury has no atmosphere to retain heat."
+    ]
   },
   {
     "name": "Venus",
     "type": "Planet",
     "distanceFromSun": 0.72,
     "radiusKm": 6051.8,
-    "description": "Hottest planet due to thick atmosphere."
+    "massKg": 4.87e+24,
+    "orbitalPeriodDays": 225,
+    "rotationPeriodDays": 243,
+    "orbitalSpeedFactor": 1.62,
+    "color": "#e8cda0",
+    "displayRadius": 7,
+    "description": "Hottest planet due to thick atmosphere.",
+    "surfaceTemperatureC": { "min": 465, "max": 465 },
+    "moons": 0,
+    "hasRings": false,
+    "gravity": 8.87,
+    "funFacts": [
+      "Venus rotates backwards compared to most planets.",
+      "A day on Venus is longer than its year.",
+      "Surface pressure is 90 times that of Earth."
+    ]
   },
   {
     "name": "Earth",
     "type": "Planet",
     "distanceFromSun": 1.0,
     "radiusKm": 6371.0,
-    "description": "Our home planet, only known planet with life."
+    "massKg": 5.97e+24,
+    "orbitalPeriodDays": 365,
+    "rotationPeriodDays": 1,
+    "orbitalSpeedFactor": 1.0,
+    "color": "#4fa3e0",
+    "displayRadius": 7,
+    "description": "Our home planet, only known planet with life.",
+    "surfaceTemperatureC": { "min": -88, "max": 58 },
+    "moons": 1,
+    "hasRings": false,
+    "gravity": 9.81,
+    "funFacts": [
+      "71% of Earth's surface is covered in water.",
+      "Earth is the densest planet in the solar system.",
+      "Earth's atmosphere protects us from harmful solar radiation."
+    ]
   },
   {
     "name": "Mars",
     "type": "Planet",
     "distanceFromSun": 1.52,
     "radiusKm": 3389.5,
-    "description": "The Red Planet, has the largest volcano."
+    "massKg": 6.42e+23,
+    "orbitalPeriodDays": 687,
+    "rotationPeriodDays": 1.03,
+    "orbitalSpeedFactor": 0.53,
+    "color": "#c1440e",
+    "displayRadius": 5,
+    "description": "The Red Planet, has the largest volcano.",
+    "surfaceTemperatureC": { "min": -125, "max": 20 },
+    "moons": 2,
+    "hasRings": false,
+    "gravity": 3.72,
+    "funFacts": [
+      "Olympus Mons on Mars is the tallest volcano in the solar system.",
+      "Mars has two small moons: Phobos and Deimos.",
+      "A Martian day is only 37 minutes longer than an Earth day."
+    ]
   },
   {
     "name": "Jupiter",
     "type": "Planet",
     "distanceFromSun": 5.20,
     "radiusKm": 69911.0,
-    "description": "Largest planet, famous for its Great Red Spot."
+    "massKg": 1.90e+27,
+    "orbitalPeriodDays": 4333,
+    "rotationPeriodDays": 0.41,
+    "orbitalSpeedFactor": 0.08,
+    "color": "#c88b3a",
+    "displayRadius": 18,
+    "description": "Largest planet, famous for its Great Red Spot.",
+    "surfaceTemperatureC": { "min": -145, "max": -145 },
+    "moons": 95,
+    "hasRings": true,
+    "gravity": 24.79,
+    "funFacts": [
+      "Jupiter's Great Red Spot is a storm older than 350 years.",
+      "Jupiter has the shortest day of all planets at just 10 hours.",
+      "More than 1,300 Earths could fit inside Jupiter."
+    ]
   },
   {
     "name": "Saturn",
     "type": "Planet",
     "distanceFromSun": 9.58,
     "radiusKm": 58232.0,
-    "description": "Known for its stunning ring system."
+    "massKg": 5.68e+26,
+    "orbitalPeriodDays": 10759,
+    "rotationPeriodDays": 0.45,
+    "orbitalSpeedFactor": 0.034,
+    "color": "#e4d191",
+    "displayRadius": 15,
+    "description": "Known for its stunning ring system.",
+    "surfaceTemperatureC": { "min": -178, "max": -178 },
+    "moons": 146,
+    "hasRings": true,
+    "gravity": 10.44,
+    "funFacts": [
+      "Saturn is the least dense planet and could float on water.",
+      "Its rings are made of ice and rock particles.",
+      "Saturn has 146 known moons, including Titan which has a thick atmosphere."
+    ]
   },
   {
     "name": "Uranus",
     "type": "Planet",
     "distanceFromSun": 19.22,
     "radiusKm": 25362.0,
-    "description": "Rotates on its side, ice giant."
+    "massKg": 8.68e+25,
+    "orbitalPeriodDays": 30687,
+    "rotationPeriodDays": 0.72,
+    "orbitalSpeedFactor": 0.012,
+    "color": "#7de8e8",
+    "displayRadius": 11,
+    "description": "Rotates on its side, ice giant.",
+    "surfaceTemperatureC": { "min": -224, "max": -224 },
+    "moons": 28,
+    "hasRings": true,
+    "gravity": 8.69,
+    "funFacts": [
+      "Uranus rotates at a 98 degree tilt, essentially on its side.",
+      "It is the coldest planetary atmosphere in the solar system.",
+      "Uranus has 13 known rings."
+    ]
   },
   {
     "name": "Neptune",
     "type": "Planet",
     "distanceFromSun": 30.05,
     "radiusKm": 24622.0,
-    "description": "Farthest planet, has the strongest winds."
+    "massKg": 1.02e+26,
+    "orbitalPeriodDays": 60190,
+    "rotationPeriodDays": 0.67,
+    "orbitalSpeedFactor": 0.006,
+    "color": "#3f54ba",
+    "displayRadius": 10,
+    "description": "Farthest planet, has the strongest winds.",
+    "surfaceTemperatureC": { "min": -218, "max": -218 },
+    "moons": 16,
+    "hasRings": true,
+    "gravity": 11.15,
+    "funFacts": [
+      "Winds on Neptune can reach 2,100 km/h, the fastest in the solar system.",
+      "Neptune was the first planet predicted mathematically before being observed.",
+      "One year on Neptune equals 165 Earth years."
+    ]
   },
   {
     "name": "Pluto",
     "type": "DwarfPlanet",
     "distanceFromSun": 39.48,
     "radiusKm": 1188.3,
-    "description": "Reclassified as a dwarf planet in 2006."
+    "massKg": 1.30e+22,
+    "orbitalPeriodDays": 90560,
+    "rotationPeriodDays": 6.39,
+    "orbitalSpeedFactor": 0.004,
+    "color": "#a89070",
+    "displayRadius": 3,
+    "description": "Reclassified as a dwarf planet in 2006.",
+    "surfaceTemperatureC": { "min": -233, "max": -223 },
+    "moons": 5,
+    "hasRings": false,
+    "gravity": 0.62,
+    "funFacts": [
+      "Pluto was considered the 9th planet for 76 years.",
+      "Pluto's largest moon Charon is half the size of Pluto itself.",
+      "A day on Pluto lasts about 6.4 Earth days."
+    ]
   },
   {
     "name": "The Sun",
     "type": "Star",
     "distanceFromSun": 0.0,
     "radiusKm": 695700.0,
-    "description": "The star at the center of our solar system."
+    "massKg": 1.99e+30,
+    "orbitalPeriodDays": 0,
+    "rotationPeriodDays": 25,
+    "orbitalSpeedFactor": 0,
+    "color": "#FFD700",
+    "displayRadius": 28,
+    "description": "The star at the center of our solar system.",
+    "surfaceTemperatureC": { "min": 5500, "max": 5500 },
+    "moons": 0,
+    "hasRings": false,
+    "gravity": 274,
+    "funFacts": [
+      "The Sun contains 99.86% of the mass of the entire solar system.",
+      "Light from the Sun takes about 8 minutes to reach Earth.",
+      "The Sun is about 4.6 billion years old and halfway through its life."
+    ]
   }
 ]

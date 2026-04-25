@@ -11,7 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 
 public class DetailView extends BorderPane {
 
@@ -31,17 +30,22 @@ public class DetailView extends BorderPane {
     public void display(CelestialBody body) {
         // ── Image ─────────────────────────────────────────────
         ImageView img = new ImageView();
-        img.setFitWidth(160);
-        img.setFitHeight(160);
-        img.setPreserveRatio(true);
+        img.setFitWidth(130);
+        img.setFitHeight(130);
+        img.setPreserveRatio(true);   // respect natural aspect ratio — fixes Saturn distortion
         try {
             Image image = PlanetAssets.loadImage(body.getName(), 160, 160);
             if (image != null) img.setImage(image);
         } catch (Exception ignored) {}
-        img.setClip(new Circle(80, 80, 80));
+        // No circle clip — irregular shapes like Saturn need room to breathe
 
+        // Fixed container keeps layout stable regardless of image shape
         StackPane imgWrap = new StackPane(img);
-        imgWrap.getStyleClass().add("detail-img-wrap");
+        imgWrap.setMinSize(160, 160);
+        imgWrap.setMaxSize(160, 160);
+        imgWrap.setPrefSize(160, 160);
+        imgWrap.setStyle("-fx-background-color: transparent;");
+        imgWrap.setAlignment(Pos.CENTER);
 
         // ── Name + badge ──────────────────────────────────────
         Label name = new Label(body.getName());
