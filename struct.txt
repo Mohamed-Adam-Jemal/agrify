@@ -5,7 +5,16 @@
 │   │   │   ├── data
 │   │   │   │   └── planets.json
 │   │   │   ├── images
-│   │   │   │   └── jupiter.jpg
+│   │   │   │   ├── earth.jpg
+│   │   │   │   ├── jupiter.jpg
+│   │   │   │   ├── mars.jpg
+│   │   │   │   ├── mercury.jpg
+│   │   │   │   ├── neptune.jpg
+│   │   │   │   ├── pluto.jpg
+│   │   │   │   ├── saturn.jpg
+│   │   │   │   ├── sun.jpg
+│   │   │   │   ├── uranus.jpg
+│   │   │   │   └── venus.jpg
 │   │   │   ├── org
 │   │   │   │   └── falconsteam
 │   │   │   │       └── solarsystemexplorer
@@ -21,10 +30,13 @@
 │   │   │   │           │   ├── Planet.class
 │   │   │   │           │   └── Star.class
 │   │   │   │           ├── utils
+│   │   │   │           │   └── OrbitCalculator.class
 │   │   │   │           └── view
 │   │   │   │               ├── DetailView.class
 │   │   │   │               ├── MainView$1.class
 │   │   │   │               ├── MainView.class
+│   │   │   │               ├── OrbitAnimationPane$1.class
+│   │   │   │               ├── OrbitAnimationPane.class
 │   │   │   │               └── PlanetAssets.class
 │   │   │   └── styles
 │   │   │       └── main.css
@@ -50,10 +62,14 @@
 │   │   │                       │   ├── DwarfPlanet.class
 │   │   │                       │   ├── Planet.class
 │   │   │                       │   └── Star.class
+│   │   │                       ├── utils
+│   │   │                       │   └── OrbitCalculator.class
 │   │   │                       └── view
 │   │   │                           ├── DetailView.class
 │   │   │                           ├── MainView$1.class
 │   │   │                           ├── MainView.class
+│   │   │                           ├── OrbitAnimationPane$1.class
+│   │   │                           ├── OrbitAnimationPane.class
 │   │   │                           └── PlanetAssets.class
 │   │   ├── generated
 │   │   │   └── sources
@@ -68,7 +84,16 @@
 │   │   │       ├── data
 │   │   │       │   └── planets.json
 │   │   │       ├── images
-│   │   │       │   └── jupiter.jpg
+│   │   │       │   ├── earth.jpg
+│   │   │       │   ├── jupiter.jpg
+│   │   │       │   ├── mars.jpg
+│   │   │       │   ├── mercury.jpg
+│   │   │       │   ├── neptune.jpg
+│   │   │       │   ├── pluto.jpg
+│   │   │       │   ├── saturn.jpg
+│   │   │       │   ├── sun.jpg
+│   │   │       │   ├── uranus.jpg
+│   │   │       │   └── venus.jpg
 │   │   │       └── styles
 │   │   │           └── main.css
 │   │   └── tmp
@@ -86,12 +111,10 @@
 │   │       │   ├── compileTransaction
 │   │       │   │   ├── backup-dir
 │   │       │   │   └── stash-dir
-│   │       │   │       ├── App.class.uniqueId3
-│   │       │   │       ├── DetailView.class.uniqueId0
-│   │       │   │       ├── MainController.class.uniqueId4
-│   │       │   │       ├── MainView$1.class.uniqueId2
-│   │       │   │       ├── MainView.class.uniqueId1
-│   │       │   │       └── PlanetAssets.class.uniqueId5
+│   │       │   │       ├── App.class.uniqueId2
+│   │       │   │       ├── MainController.class.uniqueId3
+│   │       │   │       ├── MainView$1.class.uniqueId1
+│   │       │   │       └── MainView.class.uniqueId0
 │   │       │   └── previous-compilation-data.bin
 │   │       ├── compileTestJava
 │   │       ├── dependencies
@@ -145,12 +168,22 @@
 │       │   │                   ├── CompareView.java
 │       │   │                   ├── DetailView.java
 │       │   │                   ├── MainView.java
+│       │   │                   ├── OrbitAnimationPane.java
 │       │   │                   └── PlanetAssets.java
 │       │   └── resources
 │       │       ├── data
 │       │       │   └── planets.json
 │       │       ├── images
-│       │       │   └── jupiter.jpg
+│       │       │   ├── earth.jpg
+│       │       │   ├── jupiter.jpg
+│       │       │   ├── mars.jpg
+│       │       │   ├── mercury.jpg
+│       │       │   ├── neptune.jpg
+│       │       │   ├── pluto.jpg
+│       │       │   ├── saturn.jpg
+│       │       │   ├── sun.jpg
+│       │       │   ├── uranus.jpg
+│       │       │   └── venus.jpg
 │       │       └── styles
 │       │           └── main.css
 │       └── test
@@ -199,4 +232,4 @@
 ├── settings.gradle
 └── struct.txt
 
-129 directories, 71 files
+130 directories, 103 files
