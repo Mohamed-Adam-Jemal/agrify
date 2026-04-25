@@ -6,15 +6,15 @@
       <div class="alerts-summary">
         <div class="summary-pill critical">
           <span class="summary-dot"></span>
-          <span id="count-critical">0</span> Critical
+          <span id="count-critical">—</span> Critical
         </div>
         <div class="summary-pill warning">
           <span class="summary-dot"></span>
-          <span id="count-warning">0</span> Warning
+          <span id="count-warning">—</span> Warning
         </div>
         <div class="summary-pill info">
           <span class="summary-dot"></span>
-          <span id="count-info">0</span> Info
+          <span id="count-info">—</span> Info
         </div>
       </div>
     </div>
@@ -97,198 +97,211 @@
 
 <script>
 (function () {
-  console.log('Alerts page initializing...');
 
-  const TYPE_LABELS = {
-    low_stock:   'Low Stock',
-    irrigation:  'Irrigation',
-    weather:     'Weather',
-    equipment:   'Equipment',
-    temperature: 'Temperature',
-    humidity:    'Humidity',
-  };
-
-  const SEVERITY_ICONS = {
-    critical: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-    warning:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-    info:     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
-  };
-
-  // Thresholds definition (can also come from a thresholds.json if you add one)
-  const THRESHOLDS = [
-    { sensor: 'Soil Moisture', unit: '%',  critical: '< 15',  warning: '< 30',  optimal: '30 – 70' },
-    { sensor: 'Temperature',   unit: '°C', critical: '> 38',  warning: '> 32',  optimal: '15 – 30' },
-    { sensor: 'Humidity',      unit: '%',  critical: '< 20',  warning: '< 35',  optimal: '40 – 80' },
-    { sensor: 'Soil pH',       unit: 'pH', critical: '< 5.5', warning: '< 6.0', optimal: '6.0 – 7.5' },
-    { sensor: 'Nitrogen',      unit: 'mg/kg', critical: '< 20', warning: '< 35', optimal: '35 – 80' },
-  ];
-
-  let allAlerts = [];
-  let currentFilter = 'all';
-  let currentSeverity = 'all';
-
-  function severityBadge(severity) {
-    return `<span class="alert-severity-badge badge-${severity}">
-      ${SEVERITY_ICONS[severity] || ''}
-      ${severity.charAt(0).toUpperCase() + severity.slice(1)}
-    </span>`;
-  }
-
-  function statusPill(status) {
-    const labels = { active: 'Active', resolved: 'Resolved' };
-    return `<span class="status-pill status-pill-${status}"><span class="status-dot"></span>${labels[status] || status}</span>`;
-  }
-
-  function typeBadge(type) {
-    return `<span class="type-badge">${TYPE_LABELS[type] || type}</span>`;
-  }
-
-  function timeAgo(timestamp) {
-    const diff = Date.now() - new Date(timestamp).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
-  }
-
-  function updateCounts(alerts) {
-    document.getElementById('count-critical').textContent =
-      alerts.filter(a => a.severity === 'critical').length;
-    document.getElementById('count-warning').textContent =
-      alerts.filter(a => a.severity === 'warning').length;
-    document.getElementById('count-info').textContent =
-      alerts.filter(a => a.severity === 'info').length;
-  }
-
-  function getFiltered() {
-    return allAlerts.filter(a => {
-      const statusOk   = currentFilter === 'all' || a.status === currentFilter;
-      const severityOk = currentSeverity === 'all' || a.severity === currentSeverity;
-      return statusOk && severityOk;
+  /* ── Fetch alerts.json ── */
+  fetch('./data/alerts.json')
+    .then(res => res.json())
+    .then(alerts => init(alerts))
+    .catch(err => {
+      console.error('Failed to load alerts.json:', err);
+      document.getElementById('alerts-table-body').innerHTML =
+        `<tr><td colspan="7"><div class="table-empty">Failed to load alerts. Make sure you're running a local server.</div></td></tr>`;
     });
-  }
 
-  function renderTable() {
-    const tbody = document.getElementById('alerts-table-body');
-    const filtered = getFiltered();
+  function init(alerts) {
 
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="table-empty">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        No alerts match your filters
-      </div></td></tr>`;
-      return;
+    const TYPE_LABELS = {
+      low_stock:   'Low Stock',
+      irrigation:  'Irrigation',
+      weather:     'Weather',
+      equipment:   'Equipment',
+      temperature: 'Temperature',
+      humidity:    'Humidity',
+      harvest:     'Harvest',
+    };
+
+    const SEVERITY_ICONS = {
+      critical: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      warning:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+      info:     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+    };
+
+    // Thresholds — static reference data (no JSON file exists for this yet)
+    const THRESHOLDS = [
+      { sensor: 'Soil Moisture', unit: '%',     critical: '< 15',  warning: '< 30',  optimal: '30 – 70' },
+      { sensor: 'Temperature',   unit: '°C',    critical: '> 38',  warning: '> 32',  optimal: '15 – 30' },
+      { sensor: 'Humidity',      unit: '%',     critical: '< 20',  warning: '< 35',  optimal: '40 – 80' },
+      { sensor: 'Soil pH',       unit: 'pH',    critical: '< 5.5', warning: '< 6.0', optimal: '6.0 – 7.5' },
+      { sensor: 'Nitrogen',      unit: 'mg/kg', critical: '< 20',  warning: '< 35',  optimal: '35 – 80' },
+    ];
+
+    let allAlerts     = alerts;
+    let currentFilter   = 'all';
+    let currentSeverity = 'all';
+
+    /* ── Helpers ── */
+    function severityBadge(severity) {
+      return `<span class="alert-severity-badge badge-${severity}">
+        ${SEVERITY_ICONS[severity] || ''}
+        ${severity.charAt(0).toUpperCase() + severity.slice(1)}
+      </span>`;
     }
 
-    tbody.innerHTML = filtered.map(alert => `
-      <tr class="alert-row alert-row-${alert.severity} ${alert.status === 'resolved' ? 'resolved-row' : ''}" data-id="${alert.id}">
-        <td>${severityBadge(alert.severity)}</td>
-        <td>${typeBadge(alert.type)}</td>
-        <td class="alert-msg-cell">
-          <span class="alert-msg-text">${alert.message}</span>
-        </td>
-        <td class="alert-entity-cell">
-          <span class="entity-tag">${alert.entityId ?? '—'}</span>
-          <span class="entity-type">${alert.entityType ?? ''}</span>
-        </td>
-        <td class="alert-time-cell">
-          <span class="time-main">${timeAgo(alert.timestamp)}</span>
-          <span class="time-sub">${new Date(alert.timestamp).toLocaleString()}</span>
-        </td>
-        <td>${statusPill(alert.status)}</td>
-        <td>
-          ${alert.status === 'active'
-            ? `<button class="dismiss-btn" data-id="${alert.id}">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                Dismiss
-              </button>`
-            : `<span class="resolved-label">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Resolved
-              </span>`
-          }
-        </td>
-      </tr>
-    `).join('');
+    function statusPill(status) {
+      const labels = { active: 'Active', resolved: 'Resolved', acknowledged: 'Acknowledged' };
+      return `<span class="status-pill status-pill-${status}"><span class="status-dot"></span>${labels[status] || status}</span>`;
+    }
 
-    // Dismiss buttons
-    tbody.querySelectorAll('.dismiss-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = parseInt(btn.dataset.id);
-        const alert = allAlerts.find(a => a.id === id);
-        if (alert) {
-          alert.status = 'resolved';
-          updateCounts(allAlerts);
-          renderTable();
-          // Update alert badge in nav
-          const badge = document.getElementById('alert-badge');
-          if (badge) {
-            const activeCount = allAlerts.filter(a => a.status === 'active').length;
-            badge.textContent = activeCount;
-            badge.style.display = activeCount > 0 ? 'inline-block' : 'none';
-          }
-        }
+    function typeBadge(type) {
+      return `<span class="type-badge">${TYPE_LABELS[type] || type}</span>`;
+    }
+
+    function timeAgo(timestamp) {
+      const diff = Date.now() - new Date(timestamp).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1)  return 'Just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24)  return `${hrs}h ago`;
+      return `${Math.floor(hrs / 24)}d ago`;
+    }
+
+    /* ── Counts ── */
+    function updateCounts() {
+      document.getElementById('count-critical').textContent = allAlerts.filter(a => a.severity === 'critical').length;
+      document.getElementById('count-warning').textContent  = allAlerts.filter(a => a.severity === 'warning').length;
+      document.getElementById('count-info').textContent     = allAlerts.filter(a => a.severity === 'info').length;
+    }
+
+    function getFiltered() {
+      return allAlerts.filter(a => {
+        const statusOk   = currentFilter   === 'all' || a.status   === currentFilter;
+        const severityOk = currentSeverity === 'all' || a.severity === currentSeverity;
+        return statusOk && severityOk;
       });
-    });
-  }
+    }
 
-  function renderThresholds() {
-    const grid = document.getElementById('thresholds-grid');
-    grid.innerHTML = THRESHOLDS.map(t => `
-      <div class="threshold-item">
-        <div class="threshold-header">
-          <span class="threshold-sensor">${t.sensor}</span>
-          <span class="threshold-unit">${t.unit}</span>
-        </div>
-        <div class="threshold-row">
-          <span class="threshold-label tl-critical">Critical</span>
-          <span class="threshold-value tv-critical">${t.critical}</span>
-        </div>
-        <div class="threshold-row">
-          <span class="threshold-label tl-warning">Warning</span>
-          <span class="threshold-value tv-warning">${t.warning}</span>
-        </div>
-        <div class="threshold-row">
-          <span class="threshold-label tl-optimal">Optimal</span>
-          <span class="threshold-value tv-optimal">${t.optimal}</span>
-        </div>
-      </div>
-    `).join('');
-  }
+    /* ── Table ── */
+    function renderTable() {
+      const tbody    = document.getElementById('alerts-table-body');
+      const filtered = getFiltered();
 
-  function initFilters() {
-    // Status tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentFilter = tab.dataset.filter;
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="table-empty">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          No alerts match your filters
+        </div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(alert => `
+        <tr class="alert-row alert-row-${alert.severity} ${alert.status === 'resolved' ? 'resolved-row' : ''}" data-id="${alert.id}">
+          <td>${severityBadge(alert.severity)}</td>
+          <td>${typeBadge(alert.type)}</td>
+          <td class="alert-msg-cell">
+            <span class="alert-msg-text">${alert.message}</span>
+          </td>
+          <td class="alert-entity-cell">
+            <span class="entity-tag">${alert.entityId ?? '—'}</span>
+            <span class="entity-type">${alert.entityType ?? ''}</span>
+          </td>
+          <td class="alert-time-cell">
+            <span class="time-main">${timeAgo(alert.timestamp)}</span>
+            <span class="time-sub">${new Date(alert.timestamp).toLocaleString()}</span>
+          </td>
+          <td>${statusPill(alert.status)}</td>
+          <td>
+            ${alert.status === 'active'
+              ? `<button class="dismiss-btn" data-id="${alert.id}">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Dismiss
+                </button>`
+              : `<span class="resolved-label">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  ${alert.status === 'acknowledged' ? 'Acknowledged' : 'Resolved'}
+                </span>`
+            }
+          </td>
+        </tr>
+      `).join('');
+
+      // Dismiss buttons
+      tbody.querySelectorAll('.dismiss-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id    = parseInt(btn.dataset.id);
+          const alert = allAlerts.find(a => a.id === id);
+          if (alert) {
+            alert.status = 'resolved';
+            updateCounts();
+            renderTable();
+            // Update nav badge if present
+            const badge = document.getElementById('alert-badge');
+            if (badge) {
+              const activeCount = allAlerts.filter(a => a.status === 'active').length;
+              badge.textContent    = activeCount;
+              badge.style.display  = activeCount > 0 ? 'inline-block' : 'none';
+            }
+          }
+        });
+      });
+    }
+
+    /* ── Thresholds ── */
+    function renderThresholds() {
+      document.getElementById('thresholds-grid').innerHTML = THRESHOLDS.map(t => `
+        <div class="threshold-item">
+          <div class="threshold-header">
+            <span class="threshold-sensor">${t.sensor}</span>
+            <span class="threshold-unit">${t.unit}</span>
+          </div>
+          <div class="threshold-row">
+            <span class="threshold-label tl-critical">Critical</span>
+            <span class="threshold-value tv-critical">${t.critical}</span>
+          </div>
+          <div class="threshold-row">
+            <span class="threshold-label tl-warning">Warning</span>
+            <span class="threshold-value tv-warning">${t.warning}</span>
+          </div>
+          <div class="threshold-row">
+            <span class="threshold-label tl-optimal">Optimal</span>
+            <span class="threshold-value tv-optimal">${t.optimal}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ── Filters ── */
+    function initFilters() {
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentFilter = tab.dataset.filter;
+          renderTable();
+        });
+      });
+
+      document.getElementById('severity-filter').addEventListener('change', e => {
+        currentSeverity = e.target.value;
         renderTable();
       });
-    });
+    }
 
-    // Severity select
-    document.getElementById('severity-filter').addEventListener('change', e => {
-      currentSeverity = e.target.value;
-      renderTable();
-    });
-  }
+    /* ── Timestamp ── */
+    function updateTimestamp() {
+      document.getElementById('alerts-timestamp').innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Updated ${new Date().toLocaleTimeString()}`;
+    }
 
-  function initAlerts(alerts) {
-    allAlerts = alerts;
-    updateCounts(alerts);
+    /* ── Init ── */
+    initFilters();
+    updateCounts();
     renderTable();
     renderThresholds();
-    document.getElementById('alerts-timestamp').innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Updated ${new Date().toLocaleTimeString()}`;
-  }
+    updateTimestamp();
 
-  initFilters();
+  } // end init()
 
-  window.addEventListener('alertsDataLoaded', e => initAlerts(e.detail));
-  setTimeout(() => { if (window._alertsData) initAlerts(window._alertsData); }, 100);
 })();
 </script>

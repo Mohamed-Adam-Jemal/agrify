@@ -1,4 +1,504 @@
-<div class="page-content">
-  <h2>Stock Management</h2>
-  <p>Track your inventory here.</p>
+<!-- stock.html — Agrify Stock Page -->
+<div class="dashboard-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 1 0-4 0v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8m-18 0V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+      <div>
+        <h1 class="page-title">Stock</h1>
+        <p class="page-subtitle">Inventory tracking &amp; supply management</p>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-add-stock">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Item
+    </button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 1 0-4 0v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8m-18 0V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Items</span>
+        <span class="kpi-value" id="kpi-total">7</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Low Stock</span>
+        <span class="kpi-value" id="kpi-low">1</span>
+      </div>
+      <div class="kpi-trend down">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Categories</span>
+        <span class="kpi-value" id="kpi-categories">4</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Critical</span>
+        <span class="kpi-value" id="kpi-critical">1</span>
+      </div>
+      <div class="kpi-trend down">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stock Cards Grid -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 1 0-4 0v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8m-18 0V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></svg>
+        </div>
+        <h3>Inventory Overview</h3>
+      </div>
+      <div class="filter-tabs" id="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="Seeds">Seeds</button>
+        <button class="filter-tab" data-filter="Fertilizers">Fertilizers</button>
+        <button class="filter-tab" data-filter="Chemicals">Chemicals</button>
+        <button class="filter-tab" data-filter="Equipment">Equipment</button>
+      </div>
+    </div>
+    <div class="crop-cards-grid" id="stock-cards-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Two Column: Stock Level Chart + Warehouse Summary -->
+  <div class="two-columns">
+
+    <!-- Stock Levels -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3>Stock Levels</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          vs. Threshold
+        </span>
+      </div>
+      <div class="yield-chart-wrap" id="stock-chart">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Warehouse Summary -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3>By Warehouse</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+          All Locations
+        </span>
+      </div>
+      <div class="projected-list" id="warehouse-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Stock Table -->
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <h3>All Items</h3>
+      </div>
+      <span class="timestamp-badge" id="table-count">7 entries</span>
+    </div>
+    <div class="sensors-table-container">
+      <table class="sensors-table production-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Min. Threshold</th>
+            <th>Location</th>
+            <th>Last Updated</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="stock-table-body">
+          <tr><td colspan="7"><div class="table-empty">Loading stock data...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Stock Item</h3>
+        <button class="modal-close" id="modal-close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Item Name</label>
+            <input type="text" class="form-input" id="form-name" placeholder="e.g. Wheat Seeds">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" id="form-category">
+              <option value="Seeds">Seeds</option>
+              <option value="Fertilizers">Fertilizers</option>
+              <option value="Chemicals">Chemicals</option>
+              <option value="Equipment">Equipment</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Quantity</label>
+            <input type="number" class="form-input" id="form-quantity" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit</label>
+            <select class="form-input" id="form-unit">
+              <option value="kg">kg</option>
+              <option value="L">L</option>
+              <option value="m">m</option>
+              <option value="units">units</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Min. Threshold</label>
+            <input type="number" class="form-input" id="form-threshold" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <select class="form-input" id="form-location">
+              <option value="Warehouse A">Warehouse A</option>
+              <option value="Warehouse B">Warehouse B</option>
+              <option value="Warehouse C">Warehouse C</option>
+              <option value="Equipment Shed">Equipment Shed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-submit">Save Item</button>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<script>
+(function () {
+
+  /* ── Load data from stock.json ── */
+  fetch('./data/stock.json')
+    .then(res => res.json())
+    .then(stock => init(stock))
+    .catch(err => {
+      console.error('Failed to load stock.json:', err);
+      document.getElementById('stock-cards-grid').innerHTML =
+        `<div class="crop-empty">Failed to load stock data. Make sure you're running a local server.</div>`;
+    });
+
+  function init(stock) {
+
+  /* ── Category config ── */
+  const CATEGORY_CONFIG = {
+    Seeds:       { color: '#10b981', bg: '#d1fae5', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 12 7 9 7 5a5 5 0 0 1 10 0c0 4-5 7-5 7z"/></svg>` },
+    Fertilizers: { color: '#3b82f6', bg: '#dbeafe', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>` },
+    Chemicals:   { color: '#f59e0b', bg: '#fef3c7', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 9H8L9 3z"/><path d="M8 12c-2 1-3 3-3 5a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4c0-2-1-4-3-5"/></svg>` },
+    Equipment:   { color: '#8b5cf6', bg: '#ede9fe', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>` },
+  };
+
+  const LOCATION_COLORS = {
+    'Warehouse A':   '#3b82f6',
+    'Warehouse B':   '#10b981',
+    'Warehouse C':   '#f59e0b',
+    'Equipment Shed':'#8b5cf6',
+  };
+
+  /* ── Stock status logic ── */
+  function getStockStatus(item) {
+    const ratio = item.quantity / item.minThreshold;
+    if (ratio < 1)   return { key: 'critical', label: 'Critical',  pillClass: 'status-pill-prod-red',    dotColor: '#ef4444' };
+    if (ratio < 1.5) return { key: 'low',      label: 'Low Stock', pillClass: 'status-pill-prod-orange', dotColor: '#f59e0b' };
+    return              { key: 'ok',       label: 'In Stock',  pillClass: 'status-pill-prod-green',  dotColor: '#10b981' };
+  }
+
+  function statusPill(item) {
+    const s = getStockStatus(item);
+    return `<span class="status-pill ${s.pillClass}"><span class="status-dot" style="background:${s.dotColor}"></span>${s.label}</span>`;
+  }
+
+  function fmtDate(str) {
+    if (!str) return '—';
+    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function stockPercent(item) {
+    // Show quantity relative to 2× threshold for visual scale
+    return Math.min(100, Math.round((item.quantity / (item.minThreshold * 2)) * 100));
+  }
+
+  /* ── Render stock cards ── */
+  function renderStockCards(filter) {
+    const grid  = document.getElementById('stock-cards-grid');
+    const items = filter === 'all' ? stock : stock.filter(s => s.category === filter);
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="crop-empty">No items in category "${filter}"</div>`;
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const cfg    = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.Equipment;
+      const status = getStockStatus(item);
+      const pct    = stockPercent(item);
+      const barColor = status.key === 'critical' ? '#ef4444'
+                     : status.key === 'low'      ? '#f59e0b'
+                     : cfg.color;
+
+      const statusColorKey = status.key === 'critical' ? 'red'
+                           : status.key === 'low'      ? 'orange'
+                           : 'green';
+
+      return `
+        <div class="crop-card crop-card-${statusColorKey}">
+          <div class="crop-card-top">
+            <div class="crop-card-icon" style="background:${cfg.bg};color:${cfg.color}">${cfg.icon}</div>
+            <div class="crop-card-meta">
+              ${statusPill(item)}
+              <span class="crop-season-tag" style="background:${cfg.color}22;color:${cfg.color}">${item.category}</span>
+            </div>
+          </div>
+          <div class="crop-card-body">
+            <h4 class="crop-name">${item.name}</h4>
+            <div class="crop-stats">
+              <div class="crop-stat">
+                <span class="crop-stat-label">Quantity</span>
+                <span class="crop-stat-val">${item.quantity.toLocaleString()} ${item.unit}</span>
+              </div>
+              <div class="crop-stat">
+                <span class="crop-stat-label">Min. Threshold</span>
+                <span class="crop-stat-val">${item.minThreshold} ${item.unit}</span>
+              </div>
+              <div class="crop-stat">
+                <span class="crop-stat-label">Location</span>
+                <span class="crop-stat-val">${item.location}</span>
+              </div>
+            </div>
+          </div>
+          <div class="crop-card-footer">
+            <div class="crop-progress-label">
+              <span>Stock Level</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="crop-progress-track">
+              <div class="crop-progress-bar" style="width:${pct}%;background:${barColor}"></div>
+            </div>
+            <div class="crop-days-row">
+              <span class="crop-days ${status.key === 'critical' ? 'overdue' : ''}">
+                ${item.quantity.toLocaleString()} ${item.unit} available
+              </span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Render stock level bar chart ── */
+  function renderStockChart() {
+    const wrap   = document.getElementById('stock-chart');
+    const maxVal = Math.max(...stock.map(s => s.quantity));
+
+    wrap.innerHTML = `
+      <div class="yield-chart">
+        ${stock.map((item, i) => {
+          const cfg    = CATEGORY_CONFIG[item.category] || {};
+          const status = getStockStatus(item);
+          const barColor = status.key === 'critical' ? '#ef4444'
+                         : status.key === 'low'      ? '#f59e0b'
+                         : cfg.color || '#10b981';
+          return `
+          <div class="yield-bar-row">
+            <div class="yield-bar-label" title="${item.name}">${item.name.length > 14 ? item.name.slice(0,13)+'…' : item.name}</div>
+            <div class="yield-bar-track">
+              <div class="yield-bar-fill" style="width:${(item.quantity/maxVal*100).toFixed(1)}%;background:${barColor};border-radius:4px">
+                <span class="yield-bar-val">${item.quantity.toLocaleString()} ${item.unit}</span>
+              </div>
+            </div>
+            <div class="yield-bar-eff">
+              <span class="eff-pill" style="${status.key !== 'ok' ? `background:#fee2e2;color:#991b1b` : ''}">${status.label}</span>
+            </div>
+          </div>`;
+        }).join('')}
+        <div class="yield-summary">
+          <div class="yield-summary-item">
+            <span class="yield-summary-label">Items Tracked</span>
+            <span class="yield-summary-val">${stock.length}</span>
+          </div>
+          <div class="yield-summary-item">
+            <span class="yield-summary-label">Need Attention</span>
+            <span class="yield-summary-val ${stock.filter(s=>getStockStatus(s).key!=='ok').length > 0 ? 'positive' : ''}">
+              ${stock.filter(s => getStockStatus(s).key !== 'ok').length} item(s)
+            </span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ── Render warehouse summary ── */
+  function renderWarehouseList() {
+    const list = document.getElementById('warehouse-list');
+
+    // Group by location
+    const grouped = {};
+    stock.forEach(item => {
+      if (!grouped[item.location]) grouped[item.location] = [];
+      grouped[item.location].push(item);
+    });
+
+    const maxItems = Math.max(...Object.values(grouped).map(arr => arr.length));
+
+    list.innerHTML = `<div class="projected-wrap">` +
+      Object.entries(grouped).map(([loc, items]) => {
+        const color = LOCATION_COLORS[loc] || '#94a3b8';
+        const critical = items.filter(i => getStockStatus(i).key === 'critical').length;
+        return `
+          <div class="projected-item">
+            <div class="projected-item-top">
+              <div class="projected-crop-dot" style="background:${color}"></div>
+              <span class="projected-crop-name">${loc}</span>
+              <span class="projected-val">${items.length} item${items.length > 1 ? 's' : ''}</span>
+              ${critical > 0 ? `<span style="font-size:11px;font-weight:600;color:#dc2626;background:#fee2e2;padding:2px 7px;border-radius:10px;">⚠ ${critical} critical</span>` : ''}
+            </div>
+            <div class="projected-track">
+              <div class="projected-fill" style="width:${(items.length/maxItems*100).toFixed(0)}%;background:${color}"></div>
+            </div>
+          </div>`;
+      }).join('') +
+      `<div class="projected-total">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Total across <strong>${Object.keys(grouped).length} locations</strong>
+      </div>
+    </div>`;
+  }
+
+  /* ── Render full stock table ── */
+  function renderTable() {
+    const tbody = document.getElementById('stock-table-body');
+    tbody.innerHTML = stock.map(item => {
+      const cfg = CATEGORY_CONFIG[item.category] || {};
+      return `
+        <tr>
+          <td>
+            <div class="prod-crop-cell">
+              <div class="prod-crop-icon" style="color:${cfg.color || '#10b981'}">${cfg.icon || ''}</div>
+              <span class="sensor-type">${item.name}</span>
+            </div>
+          </td>
+          <td>
+            <span class="season-tag" style="background:${cfg.color || '#10b981'}18;color:${cfg.color || '#10b981'};border:1px solid ${cfg.color || '#10b981'}40">${item.category}</span>
+          </td>
+          <td class="sensor-value sensor-value-active">${item.quantity.toLocaleString()} ${item.unit}</td>
+          <td class="sensor-unit">${item.minThreshold} ${item.unit}</td>
+          <td>
+            <span class="season-tag" style="background:${LOCATION_COLORS[item.location] || '#94a3b8'}18;color:${LOCATION_COLORS[item.location] || '#94a3b8'};border:1px solid ${LOCATION_COLORS[item.location] || '#94a3b8'}40">${item.location}</span>
+          </td>
+          <td class="sensor-time">${fmtDate(item.lastUpdated)}</td>
+          <td>${statusPill(item)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  /* ── Update KPI cards dynamically ── */
+  function updateKPIs() {
+    const critical = stock.filter(s => getStockStatus(s).key === 'critical').length;
+    const low      = stock.filter(s => getStockStatus(s).key === 'low').length;
+    const cats     = new Set(stock.map(s => s.category)).size;
+
+    document.getElementById('kpi-total').textContent     = stock.length;
+    document.getElementById('kpi-low').textContent       = low + critical;
+    document.getElementById('kpi-categories').textContent = cats;
+    document.getElementById('kpi-critical').textContent  = critical;
+    document.getElementById('table-count').textContent   = stock.length + ' entries';
+  }
+
+  /* ── Filter tabs ── */
+  document.getElementById('filter-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-tab');
+    if (!btn) return;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderStockCards(btn.dataset.filter);
+  });
+
+  /* ── Modal ── */
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('btn-add-stock').addEventListener('click',  () => overlay.classList.add('open'));
+  document.getElementById('modal-close').addEventListener('click',    () => overlay.classList.remove('open'));
+  document.getElementById('btn-cancel').addEventListener('click',     () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+  document.getElementById('btn-submit').addEventListener('click', () => {
+    overlay.classList.remove('open');
+    // In production, would POST to API and refresh data
+  });
+
+  /* ── Init ── */
+  updateKPIs();
+  renderStockCards('all');
+  renderStockChart();
+  renderWarehouseList();
+  renderTable();
+
+  } // end init()
+
+})();
+</script>
