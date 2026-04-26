@@ -1,4 +1,549 @@
-<div class="page-content">
-  <h2>Analytics</h2>
-  <p>Water usage and yield charts.</p>
+<div class="dashboard-container">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-title">Analytics</h1>
+        <p class="page-subtitle">Water usage trends &amp; harvest yield insights</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="filter-tabs" id="range-tabs">
+        <button class="filter-tab active" data-range="7">7D</button>
+        <button class="filter-tab" data-range="30">30D</button>
+        <button class="filter-tab" data-range="90">90D</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/>
+        </svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Water Used</span>
+        <span class="kpi-value" id="kpi-water-total">—</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Yield</span>
+        <span class="kpi-value" id="kpi-yield-total">—</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Avg Daily Water</span>
+        <span class="kpi-value" id="kpi-water-avg">—</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+          <polyline points="17 6 23 6 23 12"/>
+        </svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Yield vs Last Season</span>
+        <span class="kpi-value" id="kpi-yield-comparison">—</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/>
+          </svg>
+        </div>
+        <h3>Water Usage Over Time</h3>
+      </div>
+      <span class="timestamp-badge" id="water-timestamp">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Per Zone · Litres/day
+      </span>
+    </div>
+    <div style="padding:16px 20px 20px">
+      <canvas id="water-usage-chart" height="100"></canvas>
+    </div>
+  </div>
+
+  <div class="two-columns">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <h3>Harvest Yield per Crop</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Season 2023–24
+        </span>
+      </div>
+      <div style="padding:16px 20px 20px">
+        <canvas id="yield-bar-chart" height="220"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h3>Soil Health by Zone</h3>
+        </div>
+        <span class="timestamp-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+          </svg>
+          Current readings
+        </span>
+      </div>
+      <div style="padding:16px 20px 20px;display:flex;justify-content:center">
+        <canvas id="soil-radar-chart" width="280" height="280"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <h3>Monthly Overview — Water vs Yield</h3>
+      </div>
+      <span class="timestamp-badge" id="monthly-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Last 6 months
+      </span>
+    </div>
+    <div style="padding:16px 20px 20px">
+      <canvas id="monthly-overview-chart" height="90"></canvas>
+    </div>
+  </div>
+
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+        </div>
+        <h3>Crop Efficiency Report</h3>
+      </div>
+      <span class="timestamp-badge" id="eff-count">—</span>
+    </div>
+    <div class="sensors-table-container">
+      <table class="sensors-table production-table">
+        <thead>
+          <tr>
+            <th>Crop</th>
+            <th>Area (ha)</th>
+            <th>Water Used (L)</th>
+            <th>Yield (kg)</th>
+            <th>L / kg ratio</th>
+            <th>Efficiency</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody id="efficiency-table-body">
+          <tr>
+            <td colspan="7">
+              <div class="table-empty">Loading analytics data...</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
+
+<script>
+  (function () {
+
+    function loadChartJS(cb) {
+      const s = document.createElement('script')
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'
+      s.onload = cb
+      s.onerror = () => console.error('Failed to load Chart.js')
+      document.head.appendChild(s)
+    }
+
+    Promise.all([
+      fetch('./data/analytics.json').then(r => r.json()),
+      fetch('./data/production.json').then(r => r.json()),
+      fetch('./data/zones.json').then(r => r.json())
+    ])
+      .then(([analytics, production, zones]) => {
+        loadChartJS(() => init(analytics, production, zones))
+      })
+      .catch(err => {
+        console.error('Failed to load analytics data:', err)
+        document.getElementById('efficiency-table-body').innerHTML =
+          `<tr><td colspan="7"><div class="table-empty">Failed to load data. Make sure you're running a local server.</div></td></tr>`
+      })
+
+    function applyDefaults() {
+      Chart.defaults.font.family = 'inherit'
+      Chart.defaults.font.size = 12
+      Chart.defaults.color = '#6b7280'
+      Chart.defaults.plugins.legend.labels.boxWidth = 12
+      Chart.defaults.plugins.legend.labels.borderRadius = 3
+      Chart.defaults.plugins.legend.labels.padding = 16
+      Chart.defaults.plugins.tooltip.cornerRadius = 8
+      Chart.defaults.plugins.tooltip.padding = 10
+    }
+
+    const ZONE_COLORS = {
+      zone_A: { stroke: '#f59e0b', fill: 'rgba(245,158,11,0.12)' },
+      zone_B: { stroke: '#ef4444', fill: 'rgba(239,68,68,0.12)' },
+      zone_C: { stroke: '#10b981', fill: 'rgba(16,185,129,0.12)' },
+      zone_D: { stroke: '#8b5cf6', fill: 'rgba(139,92,246,0.12)' }
+    }
+
+    const CROP_COLORS = ['#3b82f6', '#10b981', '#f97316', '#8b5cf6', '#f59e0b', '#ef4444']
+
+    function generateWaterData(zones, days) {
+      const labels = []
+      const now = new Date()
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(now)
+        d.setDate(d.getDate() - i)
+        labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
+      }
+      const datasets = zones.map(z => {
+        const c = ZONE_COLORS[z.id] || { stroke: '#94a3b8', fill: 'rgba(148,163,184,0.12)' }
+        const base = z.area * 9
+        const data = labels.map(() => {
+          const active = Math.random() > 0.25
+          return active ? Math.round(base * (20 + Math.random() * 8)) : 0
+        })
+        return {
+          label: z.name,
+          data,
+          borderColor: c.stroke,
+          backgroundColor: c.fill,
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          tension: 0.4,
+          fill: true
+        }
+      })
+      return { labels, datasets }
+    }
+
+    function generateMonthlyData(analytics) {
+      const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr']
+      const waterData = [18400, 22100, 15300, 19800, 24500, analytics.yield.current.total * 0.03 | 0]
+      const yieldData = [8200, 9400, 7800, 10200, 11500, analytics.yield.current.total]
+      return { months, waterData, yieldData }
+    }
+
+    function init(analytics, production, zones) {
+      applyDefaults()
+
+      const yieldData = analytics.yield
+      const soilHealth = analytics.soilHealth || []
+
+      const totalWater = zones.reduce((s, z) => s + z.area * 9 * 18, 0) | 0
+      const avgDaily = (totalWater / 7) | 0
+      document.getElementById('kpi-water-total').textContent = totalWater.toLocaleString() + ' L'
+      document.getElementById('kpi-yield-total').textContent = yieldData.current.total.toLocaleString() + ' kg'
+      document.getElementById('kpi-water-avg').textContent = avgDaily.toLocaleString() + ' L'
+      document.getElementById('kpi-yield-comparison').textContent = '+' + yieldData.current.comparison + '%'
+      document.getElementById('water-timestamp').innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Updated ${new Date().toLocaleTimeString()}`
+
+      let activeRange = 7
+      let waterChart = null
+
+      function buildWaterChart(days) {
+        const { labels, datasets } = generateWaterData(zones, days)
+        const ctx = document.getElementById('water-usage-chart').getContext('2d')
+        if (waterChart) waterChart.destroy()
+        waterChart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { position: 'top' },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()} L`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                ticks: { maxTicksLimit: 10 }
+              },
+              y: {
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                beginAtZero: true,
+                title: { display: true, text: 'Litres / day', color: '#9ca3af', font: { size: 11 } }
+              }
+            }
+          }
+        })
+      }
+
+      buildWaterChart(7)
+
+      document.getElementById('range-tabs').addEventListener('click', e => {
+        const btn = e.target.closest('.filter-tab')
+        if (!btn) return
+        document.querySelectorAll('#range-tabs .filter-tab').forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+        buildWaterChart(parseInt(btn.dataset.range))
+      })
+
+      const byCrop = yieldData.byCrop
+      new Chart(document.getElementById('yield-bar-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: byCrop.map(d => d.crop),
+          datasets: [{
+            label: 'Yield (kg)',
+            data: byCrop.map(d => d.yield),
+            backgroundColor: byCrop.map((_, i) => CROP_COLORS[i % CROP_COLORS.length] + 'cc'),
+            borderColor: byCrop.map((_, i) => CROP_COLORS[i % CROP_COLORS.length]),
+            borderWidth: 1.5,
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.parsed.y.toLocaleString()} kg`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: 'rgba(0,0,0,0.04)' },
+              beginAtZero: true,
+              title: { display: true, text: 'kg', color: '#9ca3af', font: { size: 11 } }
+            }
+          }
+        }
+      })
+
+      if (soilHealth.length > 0) {
+        const radarLabels = ['pH', 'Nitrogen', 'Moisture', 'Phosphorus', 'Potassium']
+        const radarDatasets = soilHealth.map((z, i) => ({
+          label: z.zone,
+          data: [
+            ((z.ph - 5) / 3 * 100) | 0,
+            (z.nitrogen / 80 * 100) | 0,
+            (z.moisture) | 0,
+            (z.phosphorus || 60) | 0,
+            (z.potassium || 55) | 0
+          ],
+          borderColor: CROP_COLORS[i % CROP_COLORS.length],
+          backgroundColor: CROP_COLORS[i % CROP_COLORS.length] + '22',
+          borderWidth: 2,
+          pointRadius: 3
+        }))
+        new Chart(document.getElementById('soil-radar-chart').getContext('2d'), {
+          type: 'radar',
+          data: { labels: radarLabels, datasets: radarDatasets },
+          options: {
+            responsive: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+              r: {
+                min: 0, max: 100,
+                ticks: { stepSize: 25, font: { size: 10 } },
+                grid: { color: 'rgba(0,0,0,0.07)' },
+                pointLabels: { font: { size: 11 } }
+              }
+            }
+          }
+        })
+      } else {
+        document.getElementById('soil-radar-chart').parentElement.innerHTML =
+          `<div class="table-empty" style="padding:60px 0">No soil health data available</div>`
+      }
+
+      const { months, waterData, yieldData: mYield } = generateMonthlyData(analytics)
+      new Chart(document.getElementById('monthly-overview-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              type: 'line',
+              label: 'Water Used (L)',
+              data: waterData,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59,130,246,0.10)',
+              borderWidth: 2.5,
+              tension: 0.4,
+              fill: true,
+              yAxisID: 'yWater',
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              type: 'bar',
+              label: 'Yield (kg)',
+              data: mYield,
+              backgroundColor: 'rgba(16,185,129,0.70)',
+              borderColor: '#10b981',
+              borderWidth: 1,
+              borderRadius: 5,
+              yAxisID: 'yYield'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            x: { grid: { display: false } },
+            yWater: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: 'rgba(0,0,0,0.04)' },
+              title: { display: true, text: 'Water (L)', color: '#3b82f6', font: { size: 11 } },
+              beginAtZero: true
+            },
+            yYield: {
+              type: 'linear',
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              title: { display: true, text: 'Yield (kg)', color: '#10b981', font: { size: 11 } },
+              beginAtZero: true
+            }
+          }
+        }
+      })
+
+      const harvested = production.filter(p => p.status === 'harvested' && p.yield)
+      document.getElementById('eff-count').textContent = harvested.length + ' crops'
+
+      function effRating(ratio) {
+        if (ratio < 3) return { label: 'Excellent', pillClass: 'status-pill-prod-green' }
+        if (ratio < 5) return { label: 'Good', pillClass: 'status-pill-prod-green' }
+        if (ratio < 8) return { label: 'Average', pillClass: 'status-pill-prod-orange' }
+        return { label: 'Poor', pillClass: 'status-pill-prod-red' }
+      }
+
+      const tbody = document.getElementById('efficiency-table-body')
+      if (harvested.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="table-empty">No harvested crop data yet.</div></td></tr>`
+      } else {
+        tbody.innerHTML = harvested.map((p, i) => {
+          const waterUsed = Math.round(p.area * 9 * 24 * 60)
+          const ratio = +(waterUsed / p.yield).toFixed(2)
+          const eff = byCrop.find(b => b.crop === p.crop)
+          const effPct = eff ? eff.efficiency : '—'
+          const rating = effRating(ratio)
+          const color = CROP_COLORS[i % CROP_COLORS.length]
+          return `
+          <tr>
+            <td>
+              <div class="prod-crop-cell">
+                <div class="prod-crop-icon" style="color:${color}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+                </div>
+                <span class="sensor-type">${p.crop}</span>
+              </div>
+            </td>
+            <td class="sensor-unit">${p.area} ha</td>
+            <td class="sensor-value sensor-value-active">${waterUsed.toLocaleString()} L</td>
+            <td class="sensor-value sensor-value-active">${p.yield.toLocaleString()} kg</td>
+            <td class="sensor-unit">${ratio} L/kg</td>
+            <td class="sensor-unit">${effPct}%</td>
+            <td><span class="status-pill ${rating.pillClass}"><span class="status-dot"></span>${rating.label}</span></td>
+          </tr>`
+        }).join('')
+      }
+    }
+  })()
+</script>
