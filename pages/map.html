@@ -1,4 +1,789 @@
-<div class="page-content">
-  <h2>Farm Zone Map</h2>
-  <p>Live zone layout and status.</p>
+<style>
+  #farm-map {
+    height: 460px;
+    width: 100%;
+    border-radius: 0 0 12px 12px;
+    z-index: 1;
+    background: #e8f4e8
+  }
+
+  .map-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    align-items: start
+  }
+
+  @media (max-width: 900px) {
+    .map-layout { grid-template-columns: 1fr }
+  }
+
+  .map-card { padding: 0; overflow: hidden }
+  .map-card .card-header { padding: 14px 18px; border-bottom: 1px solid var(--border, #e5e7eb) }
+
+  .zone-panel { min-height: 520px; display: flex; flex-direction: column }
+
+  .zone-panel-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #9ca3af);
+    gap: 12px;
+    padding: 40px 20px;
+    text-align: center
+  }
+
+  .zone-panel-empty svg { opacity: .4 }
+  .zone-panel-empty p { font-size: 13px; line-height: 1.5; margin: 0 }
+
+  .zone-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    margin-bottom: 16px
+  }
+
+  .zone-detail-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 3px rgba(0,0,0,.08) }
+  .zone-detail-name { font-size: 16px; font-weight: 700; margin: 0 }
+  .zone-detail-crop { font-size: 12px; color: var(--text-muted, #9ca3af) }
+
+  .zone-sensor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px }
+
+  .zone-sensor-item {
+    background: var(--bg-secondary, #f8fafc);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border, #e5e7eb)
+  }
+
+  .zone-sensor-label {
+    font-size: 11px;
+    color: var(--text-muted, #9ca3af);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    display: block;
+    margin-bottom: 4px
+  }
+
+  .zone-sensor-val { font-size: 18px; font-weight: 700; color: var(--text, #111827); display: block; line-height: 1 }
+  .zone-sensor-val span { font-size: 11px; font-weight: 500; color: var(--text-muted, #9ca3af); margin-left: 2px }
+  .zone-sensor-bar { height: 3px; border-radius: 99px; background: var(--border, #e5e7eb); margin-top: 6px; overflow: hidden }
+  .zone-sensor-bar-fill { height: 100%; border-radius: 99px; transition: width .4s }
+
+  .zone-irr-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border, #e5e7eb);
+    margin-bottom: 10px;
+    transition: border-color .2s, background .2s
+  }
+
+  .zone-irr-toggle-row.on       { border-color: #3b82f6; background: #eff6ff }
+  .zone-irr-toggle-row.critical { border-color: #dc2626; background: #fff1f1 }
+  .zone-irr-label { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px }
+  .zone-irr-sub { font-size: 11px; color: var(--text-muted, #9ca3af); display: block; margin-top: 1px }
+
+  .toggle { position: relative; display: inline-flex; cursor: pointer }
+  .toggle input { opacity: 0; width: 0; height: 0; position: absolute }
+
+  .toggle-track {
+    width: 40px;
+    height: 22px;
+    background: #d1d5db;
+    border-radius: 99px;
+    transition: background .2s;
+    position: relative
+  }
+
+  .toggle input:checked + .toggle-track { background: #3b82f6 }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    transition: transform .2s
+  }
+
+  .toggle input:checked + .toggle-track::after { transform: translateX(18px) }
+
+  .zone-water-usage { font-size: 12px; color: var(--text-muted, #9ca3af); display: flex; align-items: center; gap: 6px; margin-top: 8px }
+
+  .irr-table { width: 100%; border-collapse: collapse }
+
+  .irr-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted, #9ca3af);
+    padding: 0 16px 10px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border, #e5e7eb)
+  }
+
+  .irr-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border, #e5e7eb); vertical-align: middle }
+  .irr-table tr:last-child td { border-bottom: none }
+  .irr-table tr.row-active   td:first-child { border-left: 3px solid #3b82f6 }
+  .irr-table tr.row-critical td:first-child { border-left: 3px solid #dc2626 }
+  .irr-table tr.row-inactive td:first-child { border-left: 3px solid transparent }
+
+  .zone-name-cell { display: flex; align-items: center; gap: 9px }
+  .zone-color-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0 }
+
+  .irr-status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px }
+  .irr-status-pill.active   { background: #dbeafe; color: #1d4ed8 }
+  .irr-status-pill.inactive { background: #f3f4f6; color: #6b7280 }
+  .irr-status-pill.critical { background: #fee2e2; color: #991b1b }
+
+  .irr-status-dot { width: 6px; height: 6px; border-radius: 50% }
+  .irr-status-pill.active   .irr-status-dot { background: #3b82f6; animation: blink 1.4s infinite }
+  .irr-status-pill.inactive .irr-status-dot { background: #9ca3af }
+  .irr-status-pill.critical .irr-status-dot { background: #dc2626; animation: blink .8s infinite }
+
+  @keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: .25 } }
+
+  .water-cell { font-size: 12px; color: var(--text-muted, #9ca3af) }
+  .water-cell strong { color: var(--text, #111827); font-weight: 600 }
+
+  .map-legend {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: 500;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 11px;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,.1);
+    pointer-events: none
+  }
+
+  .legend-title { font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px }
+  .legend-row { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; color: #374151 }
+  .legend-row:last-child { margin-bottom: 0 }
+  .legend-swatch { width: 22px; height: 10px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1) }
+
+  .leaflet-popup-content-wrapper { border-radius: 10px !important; box-shadow: 0 8px 24px rgba(0,0,0,.15) !important; font-family: inherit !important }
+  .map-popup { font-size: 13px }
+  .map-popup-name { font-size: 14px; font-weight: 700; margin: 0 0 4px }
+  .map-popup-crop { font-size: 12px; color: #6b7280; margin: 0 0 8px }
+  .map-popup-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; margin-bottom: 3px }
+  .map-popup-row span:first-child { color: #9ca3af }
+  .map-popup-row span:last-child { font-weight: 600 }
+  .map-popup-status { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px }
+  .map-popup-status.active   { color: #2563eb }
+  .map-popup-status.inactive { color: #6b7280 }
+  .map-popup-status.critical { color: #dc2626 }
+
+  .irr-bulk-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    background: var(--bg-secondary, #f8fafc)
+  }
+
+  .irr-bulk-label { font-size: 12px; color: var(--text-muted, #9ca3af); margin-right: auto }
+
+  .btn-bulk {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border, #e5e7eb);
+    cursor: pointer;
+    transition: all .15s;
+    background: #fff;
+    color: var(--text, #374151);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px
+  }
+
+  .btn-bulk:hover        { background: #f0f9ff; border-color: #93c5fd; color: #1d4ed8 }
+  .btn-bulk.danger:hover { background: #fff1f1; border-color: #fca5a5; color: #dc2626 }
+
+  .zone-panel-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-muted, #9ca3af);
+    cursor: pointer;
+    margin-bottom: 14px;
+    padding: 3px 0;
+    border: none;
+    background: none;
+    transition: color .15s
+  }
+
+  .zone-panel-back:hover { color: #374151 }
+
+  .zone-tooltip {
+    background: rgba(0,0,0,.72) !important;
+    border: none !important;
+    border-radius: 5px !important;
+    color: #fff !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 3px 8px !important;
+    box-shadow: none !important;
+    white-space: nowrap
+  }
+
+  .zone-tooltip::before { display: none !important }
+  .leaflet-popup-content { margin: 12px 14px !important }
+</style>
+
+<div class="dashboard-container">
+
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div>
+        <h1 class="page-title">Farm Map</h1>
+        <p class="page-subtitle">Zone layout &amp; live irrigation control</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" id="btn-all-off">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        All Off
+      </button>
+      <button class="btn-primary" id="btn-all-on">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>
+        Irrigate All
+      </button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+
+    <div class="kpi-card">
+      <div class="kpi-icon green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Zones</span>
+        <span class="kpi-value" id="kpi-total-zones">—</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Irrigating Now</span>
+        <span class="kpi-value" id="kpi-irrigating">—</span>
+      </div>
+      <div class="kpi-trend up">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Farm Area</span>
+        <span class="kpi-value" id="kpi-total-area">—</span>
+      </div>
+      <div class="kpi-trend neutral">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon red">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Critical Zones</span>
+        <span class="kpi-value" id="kpi-critical">—</span>
+      </div>
+      <div class="kpi-trend down">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="map-layout">
+
+    <div class="card map-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          </div>
+          <h3>Live Zone Map</h3>
+        </div>
+        <span class="timestamp-badge" id="map-timestamp">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Loading...
+        </span>
+      </div>
+      <div style="position:relative">
+        <div id="farm-map"></div>
+        <div class="map-legend">
+          <div class="legend-title">Zone Status</div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#93c5fd;border-color:#3b82f6"></div>
+            <span>Irrigating</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#fca5a5;border-color:#dc2626"></div>
+            <span>Critical</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#d1fae5;border-color:#6ee7b7"></div>
+            <span>Idle</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card zone-panel" id="zone-panel">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon-wrap">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Zone Details</h3>
+        </div>
+      </div>
+      <div style="padding:16px 18px" id="zone-panel-body">
+        <div class="zone-panel-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p>Select a zone on the map<br>to view sensor readings<br>and control irrigation.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card full-width">
+    <div class="card-header">
+      <div class="card-header-left">
+        <div class="card-icon-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>
+        </div>
+        <h3>Irrigation Control</h3>
+      </div>
+      <span class="timestamp-badge" id="irr-updated">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Live
+      </span>
+    </div>
+
+    <div class="irr-bulk-row">
+      <span class="irr-bulk-label">Bulk actions:</span>
+      <button class="btn-bulk" id="bulk-on">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>
+        All ON
+      </button>
+      <button class="btn-bulk danger" id="bulk-off">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        All OFF
+      </button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="irr-table">
+        <thead>
+          <tr>
+            <th>Zone</th>
+            <th>Crop</th>
+            <th>Area</th>
+            <th>Soil Moisture</th>
+            <th>Temperature</th>
+            <th>Status</th>
+            <th>Toggle</th>
+          </tr>
+        </thead>
+        <tbody id="irr-table-body">
+          <tr><td colspan="7"><div class="table-empty">Loading zones...</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
+
+<script>
+(function () {
+
+  const LS_KEY = 'agrify_irrigation_v2'
+
+  const ZONE_COLORS = {
+    zone_A: '#f59e0b',
+    zone_B: '#ef4444',
+    zone_C: '#10b981',
+    zone_D: '#8b5cf6'
+  }
+
+  function loadState () {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}') }
+    catch (e) { return {} }
+  }
+
+  function saveState (zones) {
+    const s = {}
+    zones.forEach(z => { s[z.id] = z.irrigationStatus })
+    localStorage.setItem(LS_KEY, JSON.stringify(s))
+  }
+
+  function pointToPolygon (lat, lng, area) {
+    const half = Math.sqrt(area) * 0.0004
+    return [
+      [lat + half, lng - half],
+      [lat + half, lng + half],
+      [lat - half, lng + half],
+      [lat - half, lng - half]
+    ]
+  }
+
+  function zoneColor (zone) {
+    if (zone.irrigationStatus === 'active')   return { fill: '#93c5fd', stroke: '#2563eb', opacity: 0.65 }
+    if (zone.irrigationStatus === 'critical') return { fill: '#fca5a5', stroke: '#dc2626', opacity: 0.60 }
+    return { fill: zone.color, stroke: zone.color, opacity: 0.22 }
+  }
+
+  function moistureColor (val) {
+    if (val < 25) return '#ef4444'
+    if (val < 40) return '#f59e0b'
+    return '#10b981'
+  }
+
+  function statusPill (status) {
+    const labels = { active: 'Irrigating', inactive: 'Idle', critical: 'Critical' }
+    return `<span class="irr-status-pill ${status}">
+      <span class="irr-status-dot"></span>
+      ${labels[status] || status}
+    </span>`
+  }
+
+  function popupHTML (zone) {
+    const icons = {
+      active:   `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>`,
+      inactive: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`,
+      critical: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`
+    }
+    const labels = { active: 'Irrigation ON', inactive: 'Irrigation OFF', critical: 'Critical — needs water' }
+    return `<div class="map-popup">
+      <p class="map-popup-name">${zone.name}</p>
+      <p class="map-popup-crop">${zone.crop} · ${zone.id}</p>
+      <div class="map-popup-row"><span>Area</span><span>${zone.area} ha</span></div>
+      <div class="map-popup-row"><span>Soil Moisture</span><span>${zone.soilMoisture}%</span></div>
+      <div class="map-popup-row"><span>Temperature</span><span>${zone.temperature}°C</span></div>
+      <div class="map-popup-status ${zone.irrigationStatus}">
+        ${icons[zone.irrigationStatus] || ''}
+        ${labels[zone.irrigationStatus] || zone.irrigationStatus}
+      </div>
+    </div>`
+  }
+
+  let selectedId = null
+  let leafletMap = null
+  let layers     = {}
+
+  function updateKPIs (zones) {
+    document.getElementById('kpi-total-zones').textContent = zones.length
+    document.getElementById('kpi-irrigating').textContent  = zones.filter(z => z.irrigationStatus === 'active').length
+    document.getElementById('kpi-total-area').textContent  = zones.reduce((s, z) => s + z.area, 0).toFixed(1) + ' ha'
+    document.getElementById('kpi-critical').textContent    = zones.filter(z => z.irrigationStatus === 'critical').length
+  }
+
+  function refreshLayer (zone) {
+    const layer = layers[zone.id]
+    if (!layer) return
+    const c = zoneColor(zone)
+    layer.setStyle({
+      fillColor:   c.fill,
+      color:       c.stroke,
+      fillOpacity: c.opacity,
+      weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5
+    })
+  }
+
+  function renderPanel (zone) {
+    selectedId = zone.id
+    const mc = moistureColor(zone.soilMoisture)
+    const sensors = [
+      { label: 'Soil Moisture', val: zone.soilMoisture, unit: '%',  max: 100, color: mc },
+      { label: 'Temperature',   val: zone.temperature,  unit: '°C', max: 50,  color: '#f97316' }
+    ]
+    const subText = zone.irrigationStatus === 'active'
+      ? `Active · ${zone.waterPerHour} L/hr`
+      : zone.irrigationStatus === 'critical'
+      ? `⚠ Critical — low soil moisture`
+      : `Inactive · ${zone.waterPerHour} L/hr when on`
+
+    document.getElementById('zone-panel-body').innerHTML = `
+      <button class="zone-panel-back" id="panel-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        All zones
+      </button>
+      <div class="zone-detail-header">
+        <div class="zone-detail-dot" style="background:${zone.color}"></div>
+        <div>
+          <p class="zone-detail-name">${zone.name}</p>
+          <span class="zone-detail-crop">${zone.crop} · ${zone.area} ha · ${zone.id}</span>
+        </div>
+      </div>
+      <div class="zone-sensor-grid">
+        ${sensors.map(s => `
+          <div class="zone-sensor-item">
+            <span class="zone-sensor-label">${s.label}</span>
+            <span class="zone-sensor-val">${s.val}<span>${s.unit}</span></span>
+            <div class="zone-sensor-bar">
+              <div class="zone-sensor-bar-fill" style="width:${(s.val / s.max * 100).toFixed(0)}%;background:${s.color}"></div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="zone-irr-toggle-row ${zone.irrigationStatus === 'active' ? 'on' : zone.irrigationStatus === 'critical' ? 'critical' : ''}">
+        <div>
+          <span class="zone-irr-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>
+            Irrigation
+          </span>
+          <span class="zone-irr-sub">${subText}</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="panel-toggle" ${zone.irrigationStatus === 'active' ? 'checked' : ''}>
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+      <div class="zone-water-usage">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Estimated water: <strong>${zone.irrigationStatus === 'active' ? zone.waterPerHour + ' L/hr' : '0 L/hr'}</strong>
+      </div>`
+
+    document.getElementById('panel-back').addEventListener('click', () => {
+      selectedId = null
+      document.getElementById('zone-panel-body').innerHTML = `
+        <div class="zone-panel-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <p>Select a zone on the map<br>to view sensor readings<br>and control irrigation.</p>
+        </div>`
+    })
+
+    document.getElementById('panel-toggle').addEventListener('change', e => {
+      zone.irrigationStatus = e.target.checked ? 'active' : 'inactive'
+      saveState(window._zones)
+      refreshLayer(zone)
+      updateKPIs(window._zones)
+      renderTable(window._zones)
+      renderPanel(zone)
+      const layer = layers[zone.id]
+      if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone))
+    })
+  }
+
+  function renderTable (zones) {
+    const tbody = document.getElementById('irr-table-body')
+    tbody.innerHTML = zones.map(zone => {
+      const mc = moistureColor(zone.soilMoisture)
+      return `<tr class="row-${zone.irrigationStatus}">
+        <td>
+          <div class="zone-name-cell">
+            <div class="zone-color-dot" style="background:${zone.color}"></div>
+            <strong style="font-size:13px">${zone.name}</strong>
+          </div>
+        </td>
+        <td style="font-size:13px;color:var(--text-muted,#6b7280)">${zone.crop}</td>
+        <td class="sensor-unit">${zone.area} ha</td>
+        <td>
+          <span style="font-size:13px;font-weight:600;color:${mc}">${zone.soilMoisture}%</span>
+          <div class="zone-sensor-bar" style="width:80px;margin-top:3px">
+            <div class="zone-sensor-bar-fill" style="width:${zone.soilMoisture}%;background:${mc}"></div>
+          </div>
+        </td>
+        <td class="sensor-unit">${zone.temperature}°C</td>
+        <td>${statusPill(zone.irrigationStatus)}</td>
+        <td>
+          <label class="toggle">
+            <input type="checkbox" class="zone-cb" data-id="${zone.id}" ${zone.irrigationStatus === 'active' ? 'checked' : ''}>
+            <div class="toggle-track"></div>
+          </label>
+        </td>
+      </tr>`
+    }).join('')
+
+    tbody.querySelectorAll('.zone-cb').forEach(cb => {
+      cb.addEventListener('change', e => {
+        const zone = zones.find(z => z.id === e.target.dataset.id)
+        if (!zone) return
+        zone.irrigationStatus = e.target.checked ? 'active' : 'inactive'
+        saveState(zones)
+        refreshLayer(zone)
+        updateKPIs(zones)
+        renderTable(zones)
+        if (selectedId === zone.id) renderPanel(zone)
+        const layer = layers[zone.id]
+        if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone))
+      })
+    })
+  }
+
+  function initMap (zones) {
+    if (leafletMap) return
+
+    const allLat = zones.flatMap(z => z.coords.map(c => c[0]))
+    const allLng = zones.flatMap(z => z.coords.map(c => c[1]))
+    const center = [
+      (Math.min(...allLat) + Math.max(...allLat)) / 2,
+      (Math.min(...allLng) + Math.max(...allLng)) / 2
+    ]
+
+    leafletMap = L.map('farm-map', { center, zoom: 14, scrollWheelZoom: false })
+
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { attribution: '© Esri, Maxar', maxZoom: 19 }
+    ).addTo(leafletMap)
+
+    zones.forEach(zone => {
+      const c    = zoneColor(zone)
+      const poly = L.polygon(zone.coords, {
+        fillColor:   c.fill,
+        fillOpacity: c.opacity,
+        color:       c.stroke,
+        weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5
+      }).addTo(leafletMap)
+
+      poly.bindPopup(popupHTML(zone), { maxWidth: 220 })
+      poly.bindTooltip(
+        `<strong>${zone.id}</strong> ${zone.name}`,
+        { permanent: true, direction: 'center', className: 'zone-tooltip' }
+      )
+
+      poly.on('click', () => {
+        renderPanel(zone)
+        poly.openPopup()
+      })
+
+      poly.on('mouseover', function () {
+        const c = zoneColor(zone)
+        this.setStyle({ fillOpacity: Math.min(c.opacity + 0.2, 0.9) })
+      })
+
+      poly.on('mouseout', function () {
+        this.setStyle({ fillOpacity: zoneColor(zone).opacity })
+      })
+
+      layers[zone.id] = poly
+    })
+
+    leafletMap.fitBounds(
+      L.latLngBounds(zones.flatMap(z => z.coords)),
+      { padding: [20, 20] }
+    )
+
+    document.getElementById('map-timestamp').innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Updated ${new Date().toLocaleTimeString()}`
+  }
+
+  function setAll (zones, status) {
+    zones.forEach(z => { z.irrigationStatus = status })
+    saveState(zones)
+    zones.forEach(z => refreshLayer(z))
+    updateKPIs(zones)
+    renderTable(zones)
+    if (selectedId) renderPanel(zones.find(z => z.id === selectedId))
+  }
+
+  function loadLeaflet (cb) {
+    if (window.L) { cb(); return }
+
+    const css  = document.createElement('link')
+    css.rel    = 'stylesheet'
+    css.href   = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css'
+    document.head.appendChild(css)
+
+    const script   = document.createElement('script')
+    script.src     = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js'
+    script.onload  = cb
+    script.onerror = () => {
+      document.getElementById('farm-map').innerHTML =
+        `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:13px;gap:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Could not load map. Check your connection.
+        </div>`
+    }
+    document.head.appendChild(script)
+  }
+
+  function init (data) {
+    const saved = loadState()
+
+    const zones = data.map(z => ({
+      id:               z.id,
+      name:             z.name,
+      crop:             z.crop,
+      area:             z.area,
+      soilMoisture:     z.soilMoisture,
+      temperature:      z.temperature,
+      irrigationStatus: saved[z.id] !== undefined ? saved[z.id] : z.irrigationStatus,
+      color:            ZONE_COLORS[z.id] || '#10b981',
+      waterPerHour:     Math.round(z.area * 9),
+      coords:           pointToPolygon(z.coordinates.lat, z.coordinates.lng, z.area)
+    }))
+
+    window._zones = zones
+
+    updateKPIs(zones)
+    renderTable(zones)
+
+    document.getElementById('btn-all-on').addEventListener('click',  () => setAll(zones, 'active'))
+    document.getElementById('btn-all-off').addEventListener('click', () => setAll(zones, 'inactive'))
+    document.getElementById('bulk-on').addEventListener('click',     () => setAll(zones, 'active'))
+    document.getElementById('bulk-off').addEventListener('click',    () => setAll(zones, 'inactive'))
+
+    loadLeaflet(() => initMap(zones))
+
+    setInterval(() => {
+      document.getElementById('irr-updated').innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ${new Date().toLocaleTimeString()}`
+    }, 10000)
+  }
+
+  fetch('./data/zones.json')
+    .then(r => r.json())
+    .then(data => init(data))
+    .catch(() => {
+      document.getElementById('irr-table-body').innerHTML =
+        `<tr><td colspan="7"><div class="table-empty">Failed to load zones.json</div></td></tr>`
+      document.getElementById('farm-map').innerHTML =
+        `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:13px;gap:8px">
+          Failed to load zones.json
+        </div>`
+    })
+
+})()
+</script>
