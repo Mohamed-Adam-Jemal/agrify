@@ -7,7 +7,10 @@
     "soilMoisture": 42,
     "temperature": 24,
     "irrigationStatus": "active",
-    "coordinates": { "lat": 40.7128, "lng": -74.0060 }
+    "coordinates": {
+      "lat": 35.062707479419075,
+      "lng": 10.690084109825012
+    }
   },
   {
     "id": "zone_B",
@@ -17,7 +20,10 @@
     "soilMoisture": 12,
     "temperature": 26,
     "irrigationStatus": "critical",
-    "coordinates": { "lat": 40.7158, "lng": -74.0030 }
+    "coordinates": {
+      "lat": 35.062707479419075,
+      "lng": 10.696084109825012
+    }
   },
   {
     "id": "zone_C",
@@ -27,7 +33,10 @@
     "soilMoisture": 58,
     "temperature": 23,
     "irrigationStatus": "inactive",
-    "coordinates": { "lat": 40.7100, "lng": -74.0080 }
+    "coordinates": {
+      "lat": 35.05707479419075,
+      "lng": 10.690084109825012
+    }
   },
   {
     "id": "zone_D",
@@ -37,6 +46,9 @@
     "soilMoisture": 65,
     "temperature": 25,
     "irrigationStatus": "active",
-    "coordinates": { "lat": 40.7145, "lng": -74.0100 }
+    "coordinates": {
+      "lat": 35.058307479419075,
+      "lng": 10.695694109825012
+    }
   }
 ]
