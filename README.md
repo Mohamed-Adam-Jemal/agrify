@@ -155,8 +155,10 @@ git checkout -b feature/your-feature-name
   </tr>
 </table>
 
+
 ---
 
 <div align="center">
-  Made with ☕ Java &nbsp;·&nbsp; ⭐ Star the repo if you find it useful!
+  © 2025 Solar System Explorer · Released under the [MIT License](LICENSE) 
 </div>
+
