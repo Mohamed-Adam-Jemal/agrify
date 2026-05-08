@@ -95,18 +95,15 @@
 
 </div>
 
-<script>
+<script type="module">
+import { getAllAlerts } from '../utils/dataService.js';
+
 (function () {
 
   /* ── Fetch alerts.json ── */
-  fetch('./data/alerts.json')
-    .then(res => res.json())
+  getAllAlerts()
     .then(alerts => init(alerts))
-    .catch(err => {
-      console.error('Failed to load alerts.json:', err);
-      document.getElementById('alerts-table-body').innerHTML =
-        `<tr><td colspan="7"><div class="table-empty">Failed to load alerts. Make sure you're running a local server.</div></td></tr>`;
-    });
+    .catch(err => { console.error('Failed to load alerts:', err); });
 
   function init(alerts) {
 

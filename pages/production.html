@@ -230,13 +230,15 @@
 
 </div>
 
-<script>
+<script type="module">
+import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
+
 (function () {
 
   /* ── Fetch both JSON files in parallel ── */
   Promise.all([
-    fetch('./data/production.json').then(r => r.json()),
-    fetch('./data/analytics.json').then(r => r.json()),
+    getProductionData(),
+    getAnalyticsData(),
   ])
   .then(([production, analyticsData]) => {
     init(production, analyticsData);

@@ -233,7 +233,9 @@
 
 </div>
 
-<script>
+<script type="module">
+import { getAnalyticsData, getProductionData, getZonesData } from '../utils/dataService.js';
+
   (function () {
 
     function loadChartJS(cb) {
@@ -245,9 +247,9 @@
     }
 
     Promise.all([
-      fetch('./data/analytics.json').then(r => r.json()),
-      fetch('./data/production.json').then(r => r.json()),
-      fetch('./data/zones.json').then(r => r.json())
+      getAnalyticsData(),
+      getProductionData(),
+      getZonesData()
     ])
       .then(([analytics, production, zones]) => {
         loadChartJS(() => init(analytics, production, zones))
