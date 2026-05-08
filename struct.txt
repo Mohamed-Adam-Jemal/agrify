@@ -8,6 +8,7 @@
 │   ├── sensors.json
 │   ├── stock.json
 │   └── zones.json
+├── data.zip
 ├── index.html
 ├── LICENSE
 ├── pages
@@ -22,8 +23,11 @@
 ├── styles
 │   ├── alerts.css
 │   ├── dashboard.css
-│   └── main.css
+│   ├── main.css
+│   ├── map.css
+│   ├── production.css
+│   └── stock.css
 └── utils
     └── dataService.js
 
-5 directories, 22 files
+5 directories, 26 files

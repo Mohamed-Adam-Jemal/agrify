@@ -173,17 +173,19 @@
 
 </div>
 
-<script>
+<script type="module">
+import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnalyticsData, getFarmData } from '../utils/dataService.js';
+
 (function () {
 
   /* ── Fetch all data sources in parallel ── */
   Promise.all([
-    fetch('./data/sensors.json').then(r => r.json()),
-    fetch('./data/stock.json').then(r => r.json()),
-    fetch('./data/production.json').then(r => r.json()),
-    fetch('./data/alerts.json').then(r => r.json()),
-    fetch('./data/analytics.json').then(r => r.json()),
-    fetch('./data/farm.json').then(r => r.json()),
+    getSensorsData(),
+    getStockData(),
+    getProductionData(),
+    getAllAlerts(),
+    getAnalyticsData(),
+    getFarmData(),
   ])
   .then(([sensors, stock, production, alerts, analytics, farm]) => {
     init(sensors, stock, production, alerts, analytics, farm);
