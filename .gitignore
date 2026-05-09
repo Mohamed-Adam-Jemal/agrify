@@ -1,1 +1,22 @@
+# =============================================================
+#  agrify  |  .gitignore
+# =============================================================
+
+# Environment — NEVER commit credentials
+.env
+.env.*
+!.env.example
+
+# Test files
+test_connection.php
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Additional files
 struct.txt
