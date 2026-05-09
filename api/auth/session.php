@@ -1,28 +1,23 @@
 <?php
 // =============================================================
 //  api/auth/session.php
-//  Reads credentials from .env via a lightweight parser.
-//  No external libraries needed.
+//  PDO connection + session bootstrap
+//  Auth guards verify identity against DB — not just session.
 // =============================================================
 
 declare(strict_types=1);
 
 // ---------- .env loader --------------------------------------
-// Reads the .env file at project root and populates $_ENV.
-// Must run before any define() calls.
 function loadEnv(string $path): void
 {
     if (!file_exists($path)) return;
 
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        // Skip comments
         if (str_starts_with(trim($line), '#')) continue;
-
         [$key, $value] = array_map('trim', explode('=', $line, 2)) + [1 => ''];
-
         if (!array_key_exists($key, $_ENV)) {
-            $_ENV[$key]  = $value;
+            $_ENV[$key] = $value;
             putenv("{$key}={$value}");
         }
     }
@@ -79,33 +74,83 @@ function getDB(): PDO
 // ---------- Auth guards --------------------------------------
 
 /**
- * Require a logged-in farm user (farmer or worker).
+ * Require a logged-in, active farm user.
+ * Verifies user_id exists and is active in the DB.
  */
 function requireUser(): void
 {
-    if (empty($_SESSION['user_id']) || empty($_SESSION['farm_id'])) {
+    if (empty($_SESSION['user_id'])) {
         jsonResponse(['success' => false, 'error' => 'Unauthorized.'], 401);
+    }
+
+    $pdo  = getDB();
+    $stmt = $pdo->prepare('SELECT is_active FROM users WHERE id = :id');
+    $stmt->execute([':id' => $_SESSION['user_id']]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        jsonResponse(['success' => false, 'error' => 'Unauthorized.'], 401);
+    }
+
+    if (!(bool) $user['is_active']) {
+        jsonResponse(['success' => false, 'error' => 'Account is inactive.'], 403);
     }
 }
 
 /**
- * Require the farmer role specifically.
+ * Require a farmer — verifies a row exists in the farmers table.
+ * DB check prevents role escalation via session tampering.
  */
 function requireFarmer(): void
 {
     requireUser();
-    if (($_SESSION['role'] ?? '') !== 'farmer') {
+
+    $pdo  = getDB();
+    $stmt = $pdo->prepare('SELECT id FROM farmers WHERE user_id = :user_id');
+    $stmt->execute([':user_id' => $_SESSION['user_id']]);
+
+    if (!$stmt->fetch()) {
         jsonResponse(['success' => false, 'error' => 'Forbidden. Farmer access required.'], 403);
     }
 }
 
 /**
- * Require a logged-in platform admin.
+ * Require a worker — verifies a row exists in the workers table.
+ * DB check prevents role escalation via session tampering.
+ */
+function requireWorker(): void
+{
+    requireUser();
+
+    $pdo  = getDB();
+    $stmt = $pdo->prepare('SELECT id FROM workers WHERE user_id = :user_id');
+    $stmt->execute([':user_id' => $_SESSION['user_id']]);
+
+    if (!$stmt->fetch()) {
+        jsonResponse(['success' => false, 'error' => 'Forbidden. Worker access required.'], 403);
+    }
+}
+
+/**
+ * Require a platform admin — verifies admin_id exists and is active in DB.
  */
 function requireAdmin(): void
 {
     if (empty($_SESSION['admin_id'])) {
         jsonResponse(['success' => false, 'error' => 'Unauthorized.'], 401);
+    }
+
+    $pdo  = getDB();
+    $stmt = $pdo->prepare('SELECT is_active FROM admins WHERE id = :id');
+    $stmt->execute([':id' => $_SESSION['admin_id']]);
+    $admin = $stmt->fetch();
+
+    if (!$admin) {
+        jsonResponse(['success' => false, 'error' => 'Unauthorized.'], 401);
+    }
+
+    if (!(bool) $admin['is_active']) {
+        jsonResponse(['success' => false, 'error' => 'Admin account is inactive.'], 403);
     }
 }
 
