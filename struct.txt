@@ -1,4 +1,15 @@
 .
+├── api
+│   ├── alerts.php
+│   ├── analytics.php
+│   ├── auth
+│   │   └── session.php
+│   ├── farm.php
+│   ├── production.php
+│   ├── sensors.php
+│   ├── stock.php
+│   ├── test_connection.php
+│   └── zones.php
 ├── app.js
 ├── data
 │   ├── alerts.json
@@ -8,7 +19,6 @@
 │   ├── sensors.json
 │   ├── stock.json
 │   └── zones.json
-├── data.zip
 ├── index.html
 ├── LICENSE
 ├── pages
@@ -30,4 +40,4 @@
 └── utils
     └── dataService.js
 
-5 directories, 26 files
+7 directories, 34 files
