@@ -1,8 +1,15 @@
 .
 ├── api
+│   ├── admin
+│   │   └── auth
+│   │       ├── login.php
+│   │       └── logout.php
 │   ├── alerts.php
 │   ├── analytics.php
 │   ├── auth
+│   │   ├── login.php
+│   │   ├── logout.php
+│   │   ├── register.php
 │   │   └── session.php
 │   ├── farm.php
 │   ├── production.php
@@ -40,4 +47,4 @@
 └── utils
     └── dataService.js
 
-7 directories, 34 files
+9 directories, 39 files
