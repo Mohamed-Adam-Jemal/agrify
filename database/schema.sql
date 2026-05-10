@@ -30,11 +30,6 @@ CREATE TABLE IF NOT EXISTS `admins` (
   UNIQUE KEY `uq_admin_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Seed: default platform admin (dev only)
--- Regenerate hash → php -r "echo password_hash('admin1234', PASSWORD_BCRYPT);"
-INSERT IGNORE INTO `admins` (`username`, `email`, `password`)
-VALUES ('admin', 'admin@farmapp.local', '$2y$12$REPLACE_THIS_HASH');
-
 -- ============================================================
 --  Part 2 — users
 --  Standalone. Base auth table for farmers and workers.
