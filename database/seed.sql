@@ -17,25 +17,25 @@ INSERT IGNORE INTO `admins` (`username`, `email`, `password`, `is_active`)
 VALUES (
   'admin',
   'admin@agrify.local',
-  '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', -- admin1234
+  '$2y$10$y4WHuUXcpZSPYdqU0dPVoewKWfTZgLhhvEwmQbkpgGThb7BEBv0RS', -- admin123
   1
 );
 
 -- ============================================================
 --  Users (2 farmers + 2 workers per farmer = 6 users total)
 -- ============================================================
--- Passwords are all: password1234
+-- Passwords are all: password123
 INSERT IGNORE INTO `users` (`id`, `username`, `email`, `password`, `is_active`)
 VALUES
   -- Farmers
-  (1, 'youssef_farmer', 'youssef@agrify.local', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
-  (2, 'tariq_farmer',   'tariq@agrify.local',   '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
+  (1, 'youssef_farmer', 'youssef@agrify.local', '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1),
+  (2, 'tariq_farmer',   'tariq@agrify.local',   '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1),
   -- Youssef's workers
-  (3, 'omar_worker',    'omar@agrify.local',    '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
-  (4, 'bilal_worker',   'bilal@agrify.local',   '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
+  (3, 'omar_worker',    'omar@agrify.local',    '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1),
+  (4, 'bilal_worker',   'bilal@agrify.local',   '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1),
   -- Tariq's workers
-  (5, 'hamza_worker',   'hamza@agrify.local',   '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
-  (6, 'nabil_worker',   'nabil@agrify.local',   '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1);
+  (5, 'hamza_worker',   'hamza@agrify.local',   '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1),
+  (6, 'nabil_worker',   'nabil@agrify.local',   '$2y$10$.cA7zLOxwt4nG97A23LcTOW9GdsXeSQ.czPPOapEgBHlGKIgNDkHC', 1);
 
 -- ============================================================
 --  Farmers

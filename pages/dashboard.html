@@ -178,7 +178,6 @@ import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnaly
 
 (function () {
 
-  /* ── Fetch all data sources in parallel ── */
   Promise.all([
     getSensorsData(),
     getStockData(),
@@ -187,13 +186,15 @@ import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnaly
     getAnalyticsData(),
     getFarmData(),
   ])
-  .then(([sensors, stock, production, alerts, analytics, farm]) => {
+  .then(([sensors, stock, production, alerts, analytics, farmList]) => {
+    // DB returns an array — grab the first active farm
+    const farm = Array.isArray(farmList) ? farmList[0] ?? {} : farmList;
     init(sensors, stock, production, alerts, analytics, farm);
   })
   .catch(err => {
     console.error('Failed to load dashboard data:', err);
     document.getElementById('sensors-table-body').innerHTML =
-      `<tr><td colspan="5"><div class="table-empty">Failed to load data. Make sure you're running a local server.</div></td></tr>`;
+      `<tr><td colspan="5"><div class="table-empty">Failed to load data. Make sure you are running a local server.</div></td></tr>`;
   });
 
   function init(sensors, stock, production, alerts, analytics, farm) {
@@ -221,7 +222,10 @@ import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnaly
     /* ── KPI Cards ── */
     document.getElementById('active-sensors').textContent = sensors.length;
     document.getElementById('total-stock').textContent    = stock.length;
-    document.getElementById('active-crops').textContent   = production.filter(c => c.status === 'growing' || c.status === 'planted').length;
+
+    // DB enum: 'planned' | 'growing' | 'harvested' | 'failed'
+    document.getElementById('active-crops').textContent =
+      production.filter(c => c.status === 'growing' || c.status === 'planned').length;
 
     const activeAlerts = alerts.filter(a => a.status === 'active').length;
     document.getElementById('alert-count').textContent = activeAlerts;
@@ -271,7 +275,12 @@ import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnaly
       </tr>`).join('');
 
     /* ── Farm Overview ── */
-    const totalArea = production.reduce((sum, c) => sum + (c.area || 0), 0);
+    // Sum area from active production rows; fall back to farm.total_area from DB
+    const totalArea = production.reduce((sum, c) => sum + (parseFloat(c.area) || 0), 0)
+                   || parseFloat(farm.total_area)
+                   || 0;
+
+    const areaUnit = farm.area_unit ?? 'hectares';
 
     const avgPH = analytics.soilHealth && analytics.soilHealth.length > 0
       ? analytics.soilHealth.reduce((s, z) => s + z.ph, 0) / analytics.soilHealth.length
@@ -281,13 +290,16 @@ import { getSensorsData, getStockData, getProductionData, getAllAlerts, getAnaly
       : avgPH > 7.5 ? 'Slightly Alkaline'
       : 'Neutral Loamy';
 
+    // DB column is irrigation_type; owner name comes from the farmers JOIN
+    const ownerName = [farm.first_name, farm.last_name].filter(Boolean).join(' ') || 'N/A';
+
     const farmItems = [
-      { icon: FARM_ICONS.name,       label: 'Farm Name',  value: farm.name       || 'N/A' },
-      { icon: FARM_ICONS.location,   label: 'Location',   value: farm.location   || 'N/A' },
-      { icon: FARM_ICONS.area,       label: 'Total Area', value: `${totalArea} ha` },
-      { icon: FARM_ICONS.soil,       label: 'Soil Type',  value: soilType },
-      { icon: FARM_ICONS.irrigation, label: 'Irrigation', value: farm.irrigation || 'N/A' },
-      { icon: FARM_ICONS.season,     label: 'Season',     value: new Date().getMonth() < 6 ? 'Spring / Summer' : 'Fall / Winter' },
+      { icon: FARM_ICONS.name,       label: 'Farm Name',    value: farm.name            || 'N/A' },
+      { icon: FARM_ICONS.location,   label: 'Location',     value: farm.location        || 'N/A' },
+      { icon: FARM_ICONS.area,       label: 'Total Area',   value: `${totalArea} ${areaUnit}` },
+      { icon: FARM_ICONS.soil,       label: 'Soil Type',    value: soilType },
+      { icon: FARM_ICONS.irrigation, label: 'Irrigation',   value: farm.irrigation_type || 'N/A' },
+      { icon: FARM_ICONS.season,     label: 'Farm Owner',   value: ownerName },
     ];
 
     document.getElementById('farm-details').innerHTML = farmItems.map(item => `

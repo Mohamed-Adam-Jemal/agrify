@@ -23,7 +23,6 @@
   </div>
 
   <div class="kpi-grid">
-
     <div class="kpi-card">
       <div class="kpi-icon green">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -75,7 +74,6 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
     </div>
-
   </div>
 
   <div class="map-layout">
@@ -97,18 +95,9 @@
         <div id="farm-map"></div>
         <div class="map-legend">
           <div class="legend-title">Zone Status</div>
-          <div class="legend-row">
-            <div class="legend-swatch" style="background:#93c5fd;border-color:#3b82f6"></div>
-            <span>Irrigating</span>
-          </div>
-          <div class="legend-row">
-            <div class="legend-swatch" style="background:#fca5a5;border-color:#dc2626"></div>
-            <span>Critical</span>
-          </div>
-          <div class="legend-row">
-            <div class="legend-swatch" style="background:#d1fae5;border-color:#6ee7b7"></div>
-            <span>Idle</span>
-          </div>
+          <div class="legend-row"><div class="legend-swatch" style="background:#93c5fd;border-color:#3b82f6"></div><span>Irrigating</span></div>
+          <div class="legend-row"><div class="legend-swatch" style="background:#fca5a5;border-color:#dc2626"></div><span>Critical</span></div>
+          <div class="legend-row"><div class="legend-swatch" style="background:#d1fae5;border-color:#6ee7b7"></div><span>Idle</span></div>
         </div>
       </div>
     </div>
@@ -181,67 +170,74 @@
 </div>
 
 <script type="module">
-import { getZonesData } from '../utils/dataService.js';
+import { getZonesData, getSensorsData } from '../utils/dataService.js';
 
 (function () {
 
-  const LS_KEY = 'agrify_irrigation_v2'
+  const LS_KEY = 'agrify_irrigation_v2';
 
+  // One color per zone id — extend as needed
   const ZONE_COLORS = {
-    zone_A: '#f59e0b',
-    zone_B: '#ef4444',
-    zone_C: '#10b981',
-    zone_D: '#8b5cf6'
+    zone_GV_A: '#f59e0b',
+    zone_GV_B: '#ef4444',
+    zone_GV_C: '#10b981',
+    zone_GV_D: '#8b5cf6',
+    zone_BH_A: '#3b82f6',
+    zone_BH_B: '#f97316',
+    zone_BH_C: '#06b6d4',
+  };
+
+  // ── Persist irrigation state in localStorage ──────────────
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+    catch (e) { return {}; }
   }
 
-  function loadState () {
-    try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}') }
-    catch (e) { return {} }
+  function saveState(zones) {
+    const s = {};
+    zones.forEach(z => { s[z.id] = z.irrigationStatus; });
+    localStorage.setItem(LS_KEY, JSON.stringify(s));
   }
 
-  function saveState (zones) {
-    const s = {}
-    zones.forEach(z => { s[z.id] = z.irrigationStatus })
-    localStorage.setItem(LS_KEY, JSON.stringify(s))
-  }
-
-  function pointToPolygon (lat, lng, area) {
-    const half = Math.sqrt(area) * 0.0004
+  // ── Build a square polygon from a lat/lng point ───────────
+  function pointToPolygon(lat, lng, area) {
+    const half = Math.sqrt(area) * 0.0004;
     return [
       [lat + half, lng - half],
       [lat + half, lng + half],
       [lat - half, lng + half],
-      [lat - half, lng - half]
-    ]
+      [lat - half, lng - half],
+    ];
   }
 
-  function zoneColor (zone) {
-    if (zone.irrigationStatus === 'active')   return { fill: '#93c5fd', stroke: '#2563eb', opacity: 0.65 }
-    if (zone.irrigationStatus === 'critical') return { fill: '#fca5a5', stroke: '#dc2626', opacity: 0.60 }
-    return { fill: zone.color, stroke: zone.color, opacity: 0.22 }
+  // ── Zone fill/stroke based on irrigation state ────────────
+  function zoneColor(zone) {
+    if (zone.irrigationStatus === 'active')   return { fill: '#93c5fd', stroke: '#2563eb', opacity: 0.65 };
+    if (zone.irrigationStatus === 'critical') return { fill: '#fca5a5', stroke: '#dc2626', opacity: 0.60 };
+    return { fill: zone.color, stroke: zone.color, opacity: 0.22 };
   }
 
-  function moistureColor (val) {
-    if (val < 25) return '#ef4444'
-    if (val < 40) return '#f59e0b'
-    return '#10b981'
+  function moistureColor(val) {
+    if (val < 25) return '#ef4444';
+    if (val < 40) return '#f59e0b';
+    return '#10b981';
   }
 
-  function statusPill (status) {
-    const labels = { active: 'Irrigating', inactive: 'Idle', critical: 'Critical' }
+  function statusPill(status) {
+    const labels = { active: 'Irrigating', inactive: 'Idle', critical: 'Critical' };
     return `<span class="irr-status-pill ${status}">
       <span class="irr-status-dot"></span>
       ${labels[status] || status}
-    </span>`
+    </span>`;
   }
 
-  function popupHTML (zone) {
+  function popupHTML(zone) {
     const icons = {
       active:   `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v6m0 0C8 8 4 12 4 16a8 8 0 0 0 16 0c0-4-4-8-8-8z"/></svg>`,
       inactive: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`,
-      critical: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`
-    }
-    const labels = { active: 'Irrigation ON', inactive: 'Irrigation OFF', critical: 'Critical — needs water' }
+      critical: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>`,
+    };
+    const labels = { active: 'Irrigation ON', inactive: 'Irrigation OFF', critical: 'Critical — needs water' };
     return `<div class="map-popup">
       <p class="map-popup-name">${zone.name}</p>
       <p class="map-popup-crop">${zone.crop} · ${zone.id}</p>
@@ -252,44 +248,46 @@ import { getZonesData } from '../utils/dataService.js';
         ${icons[zone.irrigationStatus] || ''}
         ${labels[zone.irrigationStatus] || zone.irrigationStatus}
       </div>
-    </div>`
+    </div>`;
   }
 
-  let selectedId = null
-  let leafletMap = null
-  let layers     = {}
+  let selectedId  = null;
+  let leafletMap  = null;
+  let layers      = {};
 
-  function updateKPIs (zones) {
-    document.getElementById('kpi-total-zones').textContent = zones.length
-    document.getElementById('kpi-irrigating').textContent  = zones.filter(z => z.irrigationStatus === 'active').length
-    document.getElementById('kpi-total-area').textContent  = zones.reduce((s, z) => s + z.area, 0).toFixed(1) + ' ha'
-    document.getElementById('kpi-critical').textContent    = zones.filter(z => z.irrigationStatus === 'critical').length
+  // ── KPI cards ─────────────────────────────────────────────
+  function updateKPIs(zones) {
+    document.getElementById('kpi-total-zones').textContent = zones.length;
+    document.getElementById('kpi-irrigating').textContent  = zones.filter(z => z.irrigationStatus === 'active').length;
+    document.getElementById('kpi-total-area').textContent  = zones.reduce((s, z) => s + parseFloat(z.area), 0).toFixed(1) + ' ha';
+    document.getElementById('kpi-critical').textContent    = zones.filter(z => z.irrigationStatus === 'critical').length;
   }
 
-  function refreshLayer (zone) {
-    const layer = layers[zone.id]
-    if (!layer) return
-    const c = zoneColor(zone)
+  function refreshLayer(zone) {
+    const layer = layers[zone.id];
+    if (!layer) return;
+    const c = zoneColor(zone);
     layer.setStyle({
       fillColor:   c.fill,
       color:       c.stroke,
       fillOpacity: c.opacity,
-      weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5
-    })
+      weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5,
+    });
   }
 
-  function renderPanel (zone) {
-    selectedId = zone.id
-    const mc = moistureColor(zone.soilMoisture)
+  // ── Zone detail side panel ─────────────────────────────────
+  function renderPanel(zone) {
+    selectedId = zone.id;
+    const mc = moistureColor(zone.soilMoisture);
     const sensors = [
       { label: 'Soil Moisture', val: zone.soilMoisture, unit: '%',  max: 100, color: mc },
-      { label: 'Temperature',   val: zone.temperature,  unit: '°C', max: 50,  color: '#f97316' }
-    ]
+      { label: 'Temperature',   val: zone.temperature,  unit: '°C', max: 50,  color: '#f97316' },
+    ];
     const subText = zone.irrigationStatus === 'active'
       ? `Active · ${zone.waterPerHour} L/hr`
       : zone.irrigationStatus === 'critical'
       ? `⚠ Critical — low soil moisture`
-      : `Inactive · ${zone.waterPerHour} L/hr when on`
+      : `Inactive · ${zone.waterPerHour} L/hr when on`;
 
     document.getElementById('zone-panel-body').innerHTML = `
       <button class="zone-panel-back" id="panel-back">
@@ -329,33 +327,34 @@ import { getZonesData } from '../utils/dataService.js';
       <div class="zone-water-usage">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Estimated water: <strong>${zone.irrigationStatus === 'active' ? zone.waterPerHour + ' L/hr' : '0 L/hr'}</strong>
-      </div>`
+      </div>`;
 
     document.getElementById('panel-back').addEventListener('click', () => {
-      selectedId = null
+      selectedId = null;
       document.getElementById('zone-panel-body').innerHTML = `
         <div class="zone-panel-empty">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <p>Select a zone on the map<br>to view sensor readings<br>and control irrigation.</p>
-        </div>`
-    })
+        </div>`;
+    });
 
     document.getElementById('panel-toggle').addEventListener('change', e => {
-      zone.irrigationStatus = e.target.checked ? 'active' : 'inactive'
-      saveState(window._zones)
-      refreshLayer(zone)
-      updateKPIs(window._zones)
-      renderTable(window._zones)
-      renderPanel(zone)
-      const layer = layers[zone.id]
-      if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone))
-    })
+      zone.irrigationStatus = e.target.checked ? 'active' : 'inactive';
+      saveState(window._zones);
+      refreshLayer(zone);
+      updateKPIs(window._zones);
+      renderTable(window._zones);
+      renderPanel(zone);
+      const layer = layers[zone.id];
+      if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone));
+    });
   }
 
-  function renderTable (zones) {
-    const tbody = document.getElementById('irr-table-body')
+  // ── Irrigation control table ──────────────────────────────
+  function renderTable(zones) {
+    const tbody = document.getElementById('irr-table-body');
     tbody.innerHTML = zones.map(zone => {
-      const mc = moistureColor(zone.soilMoisture)
+      const mc = moistureColor(zone.soilMoisture);
       return `<tr class="row-${zone.irrigationStatus}">
         <td>
           <div class="zone-name-cell">
@@ -379,160 +378,189 @@ import { getZonesData } from '../utils/dataService.js';
             <div class="toggle-track"></div>
           </label>
         </td>
-      </tr>`
-    }).join('')
+      </tr>`;
+    }).join('');
 
     tbody.querySelectorAll('.zone-cb').forEach(cb => {
       cb.addEventListener('change', e => {
-        const zone = zones.find(z => z.id === e.target.dataset.id)
-        if (!zone) return
-        zone.irrigationStatus = e.target.checked ? 'active' : 'inactive'
-        saveState(zones)
-        refreshLayer(zone)
-        updateKPIs(zones)
-        renderTable(zones)
-        if (selectedId === zone.id) renderPanel(zone)
-        const layer = layers[zone.id]
-        if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone))
-      })
-    })
+        const zone = zones.find(z => z.id === e.target.dataset.id);
+        if (!zone) return;
+        zone.irrigationStatus = e.target.checked ? 'active' : 'inactive';
+        saveState(zones);
+        refreshLayer(zone);
+        updateKPIs(zones);
+        renderTable(zones);
+        if (selectedId === zone.id) renderPanel(zone);
+        const layer = layers[zone.id];
+        if (layer && layer.isPopupOpen()) layer.setPopupContent(popupHTML(zone));
+      });
+    });
   }
 
-  function initMap (zones) {
-    if (leafletMap) return
+  // ── Leaflet map ───────────────────────────────────────────
+  function initMap(zones) {
+    if (leafletMap) return;
 
-    const allLat = zones.flatMap(z => z.coords.map(c => c[0]))
-    const allLng = zones.flatMap(z => z.coords.map(c => c[1]))
+    const allLat = zones.flatMap(z => z.coords.map(c => c[0]));
+    const allLng = zones.flatMap(z => z.coords.map(c => c[1]));
     const center = [
       (Math.min(...allLat) + Math.max(...allLat)) / 2,
-      (Math.min(...allLng) + Math.max(...allLng)) / 2
-    ]
+      (Math.min(...allLng) + Math.max(...allLng)) / 2,
+    ];
 
-    leafletMap = L.map('farm-map', { center, zoom: 14, scrollWheelZoom: false })
+    leafletMap = L.map('farm-map', { center, zoom: 14, scrollWheelZoom: false });
 
     L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       { attribution: '© Esri, Maxar', maxZoom: 19 }
-    ).addTo(leafletMap)
+    ).addTo(leafletMap);
 
     zones.forEach(zone => {
-      const c    = zoneColor(zone)
+      const c    = zoneColor(zone);
       const poly = L.polygon(zone.coords, {
         fillColor:   c.fill,
         fillOpacity: c.opacity,
         color:       c.stroke,
-        weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5
-      }).addTo(leafletMap)
+        weight:      zone.irrigationStatus === 'active' ? 2.5 : 1.5,
+      }).addTo(leafletMap);
 
-      poly.bindPopup(popupHTML(zone), { maxWidth: 220 })
+      poly.bindPopup(popupHTML(zone), { maxWidth: 220 });
       poly.bindTooltip(
         `<strong>${zone.id}</strong> ${zone.name}`,
         { permanent: true, direction: 'center', className: 'zone-tooltip' }
-      )
+      );
 
-      poly.on('click', () => {
-        renderPanel(zone)
-        poly.openPopup()
-      })
-
+      poly.on('click', () => { renderPanel(zone); poly.openPopup(); });
       poly.on('mouseover', function () {
-        const c = zoneColor(zone)
-        this.setStyle({ fillOpacity: Math.min(c.opacity + 0.2, 0.9) })
-      })
-
+        const c = zoneColor(zone);
+        this.setStyle({ fillOpacity: Math.min(c.opacity + 0.2, 0.9) });
+      });
       poly.on('mouseout', function () {
-        this.setStyle({ fillOpacity: zoneColor(zone).opacity })
-      })
+        this.setStyle({ fillOpacity: zoneColor(zone).opacity });
+      });
 
-      layers[zone.id] = poly
-    })
+      layers[zone.id] = poly;
+    });
 
     leafletMap.fitBounds(
       L.latLngBounds(zones.flatMap(z => z.coords)),
       { padding: [20, 20] }
-    )
+    );
 
     document.getElementById('map-timestamp').innerHTML = `
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Updated ${new Date().toLocaleTimeString()}`
+      Updated ${new Date().toLocaleTimeString()}`;
   }
 
-  function setAll (zones, status) {
-    zones.forEach(z => { z.irrigationStatus = status })
-    saveState(zones)
-    zones.forEach(z => refreshLayer(z))
-    updateKPIs(zones)
-    renderTable(zones)
-    if (selectedId) renderPanel(zones.find(z => z.id === selectedId))
+  function setAll(zones, status) {
+    zones.forEach(z => { z.irrigationStatus = status; });
+    saveState(zones);
+    zones.forEach(z => refreshLayer(z));
+    updateKPIs(zones);
+    renderTable(zones);
+    if (selectedId) renderPanel(zones.find(z => z.id === selectedId));
   }
 
-  function loadLeaflet (cb) {
-    if (window.L) { cb(); return }
-
-    const css  = document.createElement('link')
-    css.rel    = 'stylesheet'
-    css.href   = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css'
-    document.head.appendChild(css)
-
-    const script   = document.createElement('script')
-    script.src     = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js'
-    script.onload  = cb
+  function loadLeaflet(cb) {
+    if (window.L) { cb(); return; }
+    const css  = document.createElement('link');
+    css.rel    = 'stylesheet';
+    css.href   = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    document.head.appendChild(css);
+    const script   = document.createElement('script');
+    script.src     = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    script.onload  = cb;
     script.onerror = () => {
       document.getElementById('farm-map').innerHTML =
         `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:13px;gap:8px">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Could not load map. Check your connection.
-        </div>`
-    }
-    document.head.appendChild(script)
+        </div>`;
+    };
+    document.head.appendChild(script);
   }
 
-  function init (data) {
-    const saved = loadState()
+  // ── Merge sensor readings into zones ──────────────────────
+  // sensors.json stays file-based; we match by zone id/name
+  function mergeSensors(zones, sensors) {
+    zones.forEach(zone => {
+      // Try to find a sensor whose zone field matches this zone's id or name
+      const moisture = sensors.find(s =>
+        s.type === 'Soil Moisture' &&
+        (s.zone === zone.id || s.zone === zone.name)
+      );
+      const temp = sensors.find(s =>
+        s.type === 'Temperature' &&
+        (s.zone === zone.id || s.zone === zone.name)
+      );
+      zone.soilMoisture = moisture ? parseFloat(moisture.value) : 50;
+      zone.temperature  = temp     ? parseFloat(temp.value)     : 22;
 
-    const zones = data.map(z => ({
+      // Auto-flag critical if soil moisture is very low
+      if (zone.irrigationStatus === 'inactive' && zone.soilMoisture < 20) {
+        zone.irrigationStatus = 'critical';
+      }
+    });
+    return zones;
+  }
+
+  // ── Bootstrap ─────────────────────────────────────────────
+  function init(rawZones, sensors) {
+    const saved = loadState();
+
+    // Map DB row → zone object the UI expects
+    const zones = rawZones.map(z => ({
       id:               z.id,
       name:             z.name,
-      crop:             z.crop,
-      area:             z.area,
-      soilMoisture:     z.soilMoisture,
-      temperature:      z.temperature,
-      irrigationStatus: saved[z.id] !== undefined ? saved[z.id] : z.irrigationStatus,
-      color:            ZONE_COLORS[z.id] || '#10b981',
-      waterPerHour:     Math.round(z.area * 9),
-      coords:           pointToPolygon(z.coordinates.lat, z.coordinates.lng, z.area)
-    }))
+      crop:             z.crop             || '—',
+      area:             parseFloat(z.area) || 0,
+      // DB columns: latitude / longitude (not coordinates.lat/lng)
+      lat:              parseFloat(z.latitude),
+      lng:              parseFloat(z.longitude),
+      is_active:        z.is_active,
+      irrigationStatus: saved[z.id] !== undefined ? saved[z.id] : 'inactive',
+      color:            ZONE_COLORS[z.id]  || '#10b981',
+      waterPerHour:     Math.round(parseFloat(z.area) * 9),
+      coords:           pointToPolygon(parseFloat(z.latitude), parseFloat(z.longitude), parseFloat(z.area)),
+      // Sensor defaults — overwritten by mergeSensors()
+      soilMoisture:     50,
+      temperature:      22,
+    }));
 
-    window._zones = zones
+    // Enrich with live sensor readings from sensors.json
+    mergeSensors(zones, sensors);
 
-    updateKPIs(zones)
-    renderTable(zones)
+    window._zones = zones;
 
-    document.getElementById('btn-all-on').addEventListener('click',  () => setAll(zones, 'active'))
-    document.getElementById('btn-all-off').addEventListener('click', () => setAll(zones, 'inactive'))
-    document.getElementById('bulk-on').addEventListener('click',     () => setAll(zones, 'active'))
-    document.getElementById('bulk-off').addEventListener('click',    () => setAll(zones, 'inactive'))
+    updateKPIs(zones);
+    renderTable(zones);
 
-    loadLeaflet(() => initMap(zones))
+    document.getElementById('btn-all-on').addEventListener('click',  () => setAll(zones, 'active'));
+    document.getElementById('btn-all-off').addEventListener('click', () => setAll(zones, 'inactive'));
+    document.getElementById('bulk-on').addEventListener('click',     () => setAll(zones, 'active'));
+    document.getElementById('bulk-off').addEventListener('click',    () => setAll(zones, 'inactive'));
+
+    loadLeaflet(() => initMap(zones));
 
     setInterval(() => {
       document.getElementById('irr-updated').innerHTML = `
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        ${new Date().toLocaleTimeString()}`
-    }, 10000)
+        ${new Date().toLocaleTimeString()}`;
+    }, 10000);
   }
 
-  fetch('./data/zones.json')
-    .then(r => r.json())
-    .then(data => init(data))
-    .catch(() => {
+  // ── Fetch zones from DB + sensors from JSON in parallel ───
+  Promise.all([getZonesData(), getSensorsData()])
+    .then(([zones, sensors]) => init(zones, sensors))
+    .catch(err => {
+      console.error('Failed to load map data:', err);
       document.getElementById('irr-table-body').innerHTML =
-        `<tr><td colspan="7"><div class="table-empty">Failed to load zones.json</div></td></tr>`
+        `<tr><td colspan="7"><div class="table-empty">Failed to load zone data.</div></td></tr>`;
       document.getElementById('farm-map').innerHTML =
         `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:13px;gap:8px">
-          Failed to load zones.json
-        </div>`
-    })
+          Failed to load zone data.
+        </div>`;
+    });
 
-})()
+})();
 </script>

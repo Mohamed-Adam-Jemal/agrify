@@ -36,49 +36,49 @@ async function safeFetch(url) {
 
 async function loadStockData() {
   if (!dataCache.stock) {
-    dataCache.stock = await safeFetch('./api/stock.php');
+    dataCache.stock = await safeFetch('/api/stock.php');
   }
   return dataCache.stock;
 }
 
 async function loadProductionData() {
   if (!dataCache.production) {
-    dataCache.production = await safeFetch('./api/production.php');
+    dataCache.production = await safeFetch('/api/production.php');
   }
   return dataCache.production;
 }
 
 async function loadAlertsData() {
   if (!dataCache.alerts) {
-    dataCache.alerts = await safeFetch('./api/alerts.php');
+    dataCache.alerts = await safeFetch('/api/alerts.php');
   }
   return dataCache.alerts;
 }
 
 async function loadAnalyticsData() {
   if (!dataCache.analytics) {
-    dataCache.analytics = await safeFetch('./api/analytics.php');
+    dataCache.analytics = await safeFetch('/api/analytics.php');
   }
   return dataCache.analytics;
 }
 
 async function loadZonesData() {
   if (!dataCache.zones) {
-    dataCache.zones = await safeFetch('./api/zones.php');
+    dataCache.zones = await safeFetch('/api/zones.php');
   }
   return dataCache.zones;
 }
 
 async function loadFarmData() {
   if (!dataCache.farm) {
-    dataCache.farm = await safeFetch('./api/farm.php');
+    dataCache.farm = await safeFetch('/api/farm.php');
   }
   return dataCache.farm;
 }
 
 async function loadSensorsData() {
   if (!dataCache.sensors) {
-    dataCache.sensors = await safeFetch('./api/sensors.php');
+    dataCache.sensors = await safeFetch('/api/sensors.php');
   }
   return dataCache.sensors;
 }

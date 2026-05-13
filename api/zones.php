@@ -1,9 +1,16 @@
 <?php
-header('Content-Type: application/json');
-$file = __DIR__ . '/../data/zones.json';
-if (!file_exists($file)) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Not found']);
-    exit;
-}
-echo file_get_contents($file);
+require __DIR__ . '/auth/session.php';
+
+$pdo    = getDB();
+$farmId = $_SESSION['farm_id'];
+
+$stmt = $pdo->prepare('
+    SELECT *
+    FROM zones
+    WHERE farm_id = :farm_id
+      AND is_active = 1
+    ORDER BY farm_id
+');
+$stmt->execute([':farm_id' => $farmId]);
+
+jsonResponse($stmt->fetchAll());
