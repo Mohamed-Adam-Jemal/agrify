@@ -12,12 +12,12 @@ import {
 } from './utils/dataService.js';
 
 const PAGES = {
-  dashboard:  { title: 'Dashboard',      subtitle: 'Live farm overview', needsData: true },
-  stock:      { title: 'Stock',          subtitle: 'Track your inventory', needsData: true },
-  production: { title: 'Production',     subtitle: 'Planting and harvest log', needsData: true },
-  alerts:     { title: 'Alerts',         subtitle: 'Sensor threshold warnings', needsData: true },
-  analytics:  { title: 'Analytics',      subtitle: 'Water usage and yield', needsData: true },
-  map:        { title: 'Farm Zone Map',  subtitle: 'Manage irrigation zones', needsData: false },
+  dashboard:  { title: 'Dashboard',      subtitle: 'Live farm overview',         needsData: true  },
+  stock:      { title: 'Stock',          subtitle: 'Track your inventory',        needsData: true  },
+  production: { title: 'Production',     subtitle: 'Planting and harvest log',    needsData: true  },
+  alerts:     { title: 'Alerts',         subtitle: 'Sensor threshold warnings',   needsData: true  },
+  analytics:  { title: 'Analytics',      subtitle: 'Water usage and yield',       needsData: true  },
+  map:        { title: 'Farm Zone Map',  subtitle: 'Manage irrigation zones',     needsData: false },
 };
 
 const outlet = document.getElementById('page-outlet');
@@ -56,7 +56,7 @@ async function navigate(page) {
   if (activeNav) activeNav.classList.add('active');
 
   // Update topbar
-  document.getElementById('page-title').textContent = meta.title;
+  document.getElementById('page-title').textContent    = meta.title;
   document.getElementById('page-subtitle').textContent = meta.subtitle;
 
   await updateAlertBadge();
@@ -137,9 +137,9 @@ async function updateAlertBadge() {
   if (!badge) return;
   try {
     const alerts = await getActiveAlerts();
-    const count = alerts.length;
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'inline-block' : 'none';
+    const count  = alerts.length;
+    badge.textContent    = count;
+    badge.style.display  = count > 0 ? 'inline-block' : 'none';
   } catch (err) {
     console.error('Failed to update alert badge:', err);
   }
@@ -149,36 +149,70 @@ function tick() {
   const el = document.getElementById('clock');
   if (el) {
     el.textContent = new Date().toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+      hour:   '2-digit', 
+      minute: '2-digit',
     });
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('App started - Python server mode');
-  console.log('Current path:', window.location.pathname);
-  
-  document.querySelectorAll('.nav-item').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const page = link.dataset.page;
-      if (page) {
-        history.pushState(null, '', `#${page}`);
-        navigate(page);
-      }
+// ---------- Auth guard + boot --------------------------------
+async function boot() {
+  try {
+    const res  = await fetch('/api/auth/me.php');
+    const data = await res.json();
+
+    if (!data.success) {
+      window.location.href = '/auth.html';
+      return;
+    }
+
+    window.currentUser = data.user;
+
+    // Set farm name in sidebar footer
+    const farmLabel = document.getElementById('farm-name-label');
+    if (farmLabel) farmLabel.textContent = data.user.farm_name ?? 'My Farm';
+
+    // Wire up nav links
+    document.querySelectorAll('.nav-item').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.dataset.page;
+        if (page) {
+          history.pushState(null, '', `#${page}`);
+          navigate(page);
+        }
+      });
     });
-  });
 
-  window.addEventListener('popstate', () => {
-    const hash = window.location.hash.replace('#', '');
-    navigate(hash || 'dashboard');
-  });
+    window.addEventListener('popstate', () => {
+      const hash = window.location.hash.replace('#', '');
+      navigate(hash || 'dashboard');
+    });
 
-  const initialPage = window.location.hash.replace('#', '') || 'dashboard';
-  navigate(initialPage);
-  
-  tick();
-  setInterval(tick, 1000);
-  setInterval(updateAlertBadge, 30000);
+    // Load initial page
+    const initialPage = window.location.hash.replace('#', '') || 'dashboard';
+    navigate(initialPage);
+
+    tick();
+    setInterval(tick, 1000);
+    setInterval(updateAlertBadge, 30000);
+
+  } catch (err) {
+    console.error('Boot failed:', err);
+    window.location.href = '/auth.html';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  boot();
 });
+
+async function handleLogout() {
+  try {
+    await fetch('/api/auth/logout.php', { method: 'POST' });
+  } finally {
+    window.location.href = '/auth.html';
+  }
+}
+
+window.handleLogout = handleLogout;

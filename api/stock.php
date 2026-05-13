@@ -1,9 +1,15 @@
 <?php
-header('Content-Type: application/json');
-$file = __DIR__ . '/../data/stock.json';
-if (!file_exists($file)) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Not found']);
-    exit;
-}
-echo file_get_contents($file);
+require __DIR__ . '/auth/session.php';
+
+$pdo    = getDB();
+$farmId = $_SESSION['farm_id'];
+
+$stmt = $pdo->prepare('
+    SELECT *
+    FROM stock
+    WHERE farm_id = :farm_id
+    ORDER BY category, name
+');
+$stmt->execute([':farm_id' => $farmId]);
+
+jsonResponse($stmt->fetchAll());

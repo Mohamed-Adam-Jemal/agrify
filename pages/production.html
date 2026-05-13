@@ -235,7 +235,6 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
 
 (function () {
 
-  /* ── Fetch both JSON files in parallel ── */
   Promise.all([
     getProductionData(),
     getAnalyticsData(),
@@ -246,7 +245,7 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
   .catch(err => {
     console.error('Failed to load data:', err);
     document.getElementById('crop-cards-grid').innerHTML =
-      `<div class="crop-empty">Failed to load production data. Make sure you're running a local server.</div>`;
+      `<div class="crop-empty">Failed to load production data.</div>`;
     document.getElementById('production-table-body').innerHTML =
       `<tr><td colspan="7"><div class="table-empty">Failed to load data.</div></td></tr>`;
   });
@@ -255,7 +254,6 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
 
     const analytics = analyticsData.yield;
 
-    /* ── Crop icons by name ── */
     const CROP_ICONS = {
       Wheat:    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 12 7 9 7 5a5 5 0 0 1 10 0c0 4-5 7-5 7z"/><path d="M9 15l3-3 3 3"/></svg>`,
       Corn:     `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M8 6c0 0 1 4 4 4s4-4 4-4M8 10c0 0 1 4 4 4s4-4 4-4M8 14c0 0 1 4 4 4s4-4 4-4"/></svg>`,
@@ -266,14 +264,33 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
 
     const defaultIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`;
 
-    const STATUS_COLORS = { growing: 'green', planted: 'blue', harvested: 'orange' };
-    const SEASON_COLORS = { winter: '#3b82f6', fall: '#f59e0b', spring: '#10b981', summer: '#f97316' };
+    // DB enum: 'planned' | 'growing' | 'harvested' | 'failed'
+    const STATUS_COLORS = {
+      planned:   'blue',
+      growing:   'green',
+      harvested: 'orange',
+      failed:    'red',
+    };
+
+    const SEASON_COLORS = {
+      winter: '#3b82f6',
+      autumn: '#f59e0b',
+      spring: '#10b981',
+      summer: '#f97316',
+    };
 
     /* ── Helpers ── */
     function statusPill(status) {
-      const labels = { growing: 'Growing', planted: 'Planted', harvested: 'Harvested' };
-      const color  = STATUS_COLORS[status] || 'blue';
-      return `<span class="status-pill status-pill-prod-${color}"><span class="status-dot"></span>${labels[status] || status}</span>`;
+      const labels = {
+        planned:   'Planned',
+        growing:   'Growing',
+        harvested: 'Harvested',
+        failed:    'Failed',
+      };
+      const color = STATUS_COLORS[status] || 'blue';
+      return `<span class="status-pill status-pill-prod-${color}">
+                <span class="status-dot"></span>${labels[status] || status}
+              </span>`;
     }
 
     function fmtDate(str) {
@@ -295,21 +312,37 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
       return Math.round(((now - start) / (end - start)) * 100);
     }
 
-    /* ── KPI cards ── */
+    /* ── KPI Cards ── */
     function updateKPIs() {
-      const active   = production.filter(p => p.status !== 'harvested').length;
-      const totalArea = production.reduce((sum, p) => sum + p.area, 0);
-      document.getElementById('kpi-active').textContent     = active;
-      document.getElementById('kpi-area').textContent       = totalArea + ' ha';
-      document.getElementById('kpi-yield').textContent      = analytics.current.total.toLocaleString() + ' kg';
-      document.getElementById('kpi-comparison').textContent = '+' + analytics.current.comparison + '%';
-      document.getElementById('table-count').textContent    = production.length + ' entries';
+      // Active = anything not yet harvested or failed
+      const active = production.filter(p =>
+        p.status === 'growing' || p.status === 'planned'
+      ).length;
+
+      const totalArea = production.reduce((sum, p) => sum + (parseFloat(p.area) || 0), 0);
+
+      // Compute real yield from DB data (harvested rows only)
+      const totalYield = production
+        .filter(p => p.status === 'harvested' && p.yield)
+        .reduce((sum, p) => sum + (parseFloat(p.yield) || 0), 0);
+
+      document.getElementById('kpi-active').textContent  = active;
+      document.getElementById('kpi-area').textContent    = totalArea + ' ha';
+      document.getElementById('kpi-yield').textContent   = totalYield.toLocaleString() + ' ' + (production[0]?.yield_unit ?? 'tons');
+
+      // Comparison still from analytics.json (no historical DB data yet)
+      document.getElementById('kpi-comparison').textContent =
+        analytics?.current?.comparison ? '+' + analytics.current.comparison + '%' : '—';
+
+      document.getElementById('table-count').textContent = production.length + ' entries';
     }
 
-    /* ── Render crop cards ── */
+    /* ── Crop Cards ── */
     function renderCropCards(filter) {
       const grid  = document.getElementById('crop-cards-grid');
-      const items = filter === 'all' ? production : production.filter(p => p.status === filter);
+      const items = filter === 'all'
+        ? production
+        : production.filter(p => p.status === filter);
 
       if (items.length === 0) {
         grid.innerHTML = `<div class="crop-empty">No crops with status "${filter}"</div>`;
@@ -317,24 +350,32 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
       }
 
       grid.innerHTML = items.map(p => {
-        const days    = daysUntil(p.expectedHarvest);
-        const prog    = progressDays(p.plantingDate, p.expectedHarvest);
-        const icon    = CROP_ICONS[p.crop] || defaultIcon;
-        const daysStr = p.status === 'harvested'
-          ? `<span class="crop-harvested-tag">Harvested</span>`
+        // DB fields: planting_date, expected_harvest
+        const days = daysUntil(p.expected_harvest);
+        const prog = progressDays(p.planting_date, p.expected_harvest);
+        const icon = CROP_ICONS[p.crop] || defaultIcon;
+
+        const daysStr = p.status === 'harvested' || p.status === 'failed'
+          ? ''
           : days !== null
             ? (days > 0
                 ? `<span class="crop-days">${days}d to harvest</span>`
                 : `<span class="crop-days overdue">Overdue by ${Math.abs(days)}d</span>`)
             : '';
 
+        const seasonColor = SEASON_COLORS[p.season] || '#94a3b8';
+        const statusColor = STATUS_COLORS[p.status]  || 'blue';
+
         return `
-          <div class="crop-card crop-card-${STATUS_COLORS[p.status]}">
+          <div class="crop-card crop-card-${statusColor}">
             <div class="crop-card-top">
-              <div class="crop-card-icon crop-icon-${STATUS_COLORS[p.status]}">${icon}</div>
+              <div class="crop-card-icon crop-icon-${statusColor}">${icon}</div>
               <div class="crop-card-meta">
                 ${statusPill(p.status)}
-                <span class="crop-season-tag" style="background:${SEASON_COLORS[p.season]}22;color:${SEASON_COLORS[p.season]}">${p.season.charAt(0).toUpperCase()+p.season.slice(1)}</span>
+                <span class="crop-season-tag"
+                      style="background:${seasonColor}22;color:${seasonColor}">
+                  ${p.season ? p.season.charAt(0).toUpperCase() + p.season.slice(1) : '—'}
+                </span>
               </div>
             </div>
             <div class="crop-card-body">
@@ -342,40 +383,54 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
               <div class="crop-stats">
                 <div class="crop-stat">
                   <span class="crop-stat-label">Area</span>
-                  <span class="crop-stat-val">${p.area} ha</span>
+                  <span class="crop-stat-val">${p.area} ${p.area_unit ?? 'ha'}</span>
                 </div>
                 <div class="crop-stat">
                   <span class="crop-stat-label">Planted</span>
-                  <span class="crop-stat-val">${fmtDate(p.plantingDate)}</span>
+                  <span class="crop-stat-val">${fmtDate(p.planting_date)}</span>
                 </div>
                 <div class="crop-stat">
                   <span class="crop-stat-label">${p.status === 'harvested' ? 'Yield' : 'Est. Harvest'}</span>
-                  <span class="crop-stat-val">${p.status === 'harvested' ? (p.yield ? p.yield.toLocaleString() + ' kg' : '—') : fmtDate(p.expectedHarvest)}</span>
+                  <span class="crop-stat-val">
+                    ${p.status === 'harvested'
+                      ? (p.yield ? parseFloat(p.yield).toLocaleString() + ' ' + (p.yield_unit ?? 'tons') : '—')
+                      : fmtDate(p.expected_harvest)}
+                  </span>
                 </div>
               </div>
             </div>
-            ${p.status !== 'harvested' ? `
-            <div class="crop-card-footer">
-              <div class="crop-progress-label">
-                <span>Growth Progress</span>
-                <span>${prog}%</span>
-              </div>
-              <div class="crop-progress-track">
-                <div class="crop-progress-bar crop-bar-${STATUS_COLORS[p.status]}" style="width:${prog}%"></div>
-              </div>
-              <div class="crop-days-row">${daysStr}</div>
-            </div>` : `
-            <div class="crop-card-footer harvested-footer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Harvest complete — ${fmtDate(p.expectedHarvest)}
-            </div>`}
+            ${p.status !== 'harvested' && p.status !== 'failed' ? `
+              <div class="crop-card-footer">
+                <div class="crop-progress-label">
+                  <span>Growth Progress</span>
+                  <span>${prog}%</span>
+                </div>
+                <div class="crop-progress-track">
+                  <div class="crop-progress-bar crop-bar-${statusColor}" style="width:${prog}%"></div>
+                </div>
+                <div class="crop-days-row">${daysStr}</div>
+              </div>` : `
+              <div class="crop-card-footer harvested-footer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  ${p.status === 'failed'
+                    ? '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
+                    : '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'}
+                </svg>
+                ${p.status === 'failed'
+                  ? 'Crop failed'
+                  : 'Harvest complete — ' + fmtDate(p.actual_harvest || p.expected_harvest)}
+              </div>`}
           </div>`;
       }).join('');
     }
 
-    /* ── Render yield bar chart ── */
+    /* ── Yield Chart (from analytics.json — stays file-based) ── */
     function renderYieldChart() {
-      const wrap   = document.getElementById('yield-chart');
+      const wrap = document.getElementById('yield-chart');
+      if (!analytics?.byCrop) {
+        wrap.innerHTML = `<div class="table-empty">No yield analytics available.</div>`;
+        return;
+      }
       const data   = analytics.byCrop;
       const maxVal = Math.max(...data.map(d => d.yield));
 
@@ -385,15 +440,14 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
             <div class="yield-bar-row">
               <div class="yield-bar-label">${d.crop}</div>
               <div class="yield-bar-track">
-                <div class="yield-bar-fill yield-bar-fill-${i}" style="width:${(d.yield/maxVal*100).toFixed(1)}%">
+                <div class="yield-bar-fill yield-bar-fill-${i}" style="width:${(d.yield / maxVal * 100).toFixed(1)}%">
                   <span class="yield-bar-val">${d.yield.toLocaleString()} kg</span>
                 </div>
               </div>
               <div class="yield-bar-eff">
                 <span class="eff-pill">${d.efficiency}% eff.</span>
               </div>
-            </div>
-          `).join('')}
+            </div>`).join('')}
           <div class="yield-summary">
             <div class="yield-summary-item">
               <span class="yield-summary-label">Total Harvested</span>
@@ -407,12 +461,15 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
         </div>`;
     }
 
-    /* ── Render projected yield ── */
+    /* ── Projected Yield (from analytics.json — stays file-based) ── */
     function renderProjected() {
       const list = document.getElementById('projected-list');
+      if (!analytics?.projected) {
+        list.innerHTML = `<div class="table-empty">No projection data available.</div>`;
+        return;
+      }
       const proj = analytics.projected;
       const maxP = Math.max(...Object.values(proj));
-
       const colors = { wheat: '#3b82f6', soybeans: '#10b981', tomatoes: '#f97316' };
 
       list.innerHTML = `<div class="projected-wrap">` +
@@ -420,21 +477,21 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
           <div class="projected-item">
             <div class="projected-item-top">
               <div class="projected-crop-dot" style="background:${colors[crop] || '#94a3b8'}"></div>
-              <span class="projected-crop-name">${crop.charAt(0).toUpperCase()+crop.slice(1)}</span>
+              <span class="projected-crop-name">${crop.charAt(0).toUpperCase() + crop.slice(1)}</span>
               <span class="projected-val">${val.toLocaleString()} kg</span>
             </div>
             <div class="projected-track">
-              <div class="projected-fill" style="width:${(val/maxP*100).toFixed(1)}%;background:${colors[crop] || '#94a3b8'}"></div>
+              <div class="projected-fill" style="width:${(val / maxP * 100).toFixed(1)}%;background:${colors[crop] || '#94a3b8'}"></div>
             </div>
           </div>`).join('') +
         `<div class="projected-total">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          Projected season total: <strong>${Object.values(proj).reduce((a,b)=>a+b,0).toLocaleString()} kg</strong>
+          Projected season total: <strong>${Object.values(proj).reduce((a, b) => a + b, 0).toLocaleString()} kg</strong>
         </div>
       </div>`;
     }
 
-    /* ── Render full table ── */
+    /* ── Full Table ── */
     function renderTable() {
       const tbody = document.getElementById('production-table-body');
       tbody.innerHTML = production.map(p => `
@@ -445,16 +502,25 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
               <span class="sensor-type">${p.crop}</span>
             </div>
           </td>
-          <td><span class="season-tag" style="background:${SEASON_COLORS[p.season]}18;color:${SEASON_COLORS[p.season]};border:1px solid ${SEASON_COLORS[p.season]}40">${p.season}</span></td>
-          <td class="sensor-unit">${p.area} ha</td>
-          <td class="sensor-time">${fmtDate(p.plantingDate)}</td>
-          <td class="sensor-time">${fmtDate(p.expectedHarvest)}</td>
-          <td class="sensor-value ${p.yield ? 'sensor-value-active' : 'sensor-value-na'}">${p.yield ? p.yield.toLocaleString() + ' kg' : '—'}</td>
+          <td>
+            <span class="season-tag"
+                  style="background:${(SEASON_COLORS[p.season] || '#94a3b8')}18;
+                         color:${SEASON_COLORS[p.season] || '#94a3b8'};
+                         border:1px solid ${(SEASON_COLORS[p.season] || '#94a3b8')}40">
+              ${p.season ?? '—'}
+            </span>
+          </td>
+          <td class="sensor-unit">${p.area} ${p.area_unit ?? 'ha'}</td>
+          <td class="sensor-time">${fmtDate(p.planting_date)}</td>
+          <td class="sensor-time">${fmtDate(p.expected_harvest)}</td>
+          <td class="sensor-value ${p.yield ? 'sensor-value-active' : 'sensor-value-na'}">
+            ${p.yield ? parseFloat(p.yield).toLocaleString() + ' ' + (p.yield_unit ?? 'tons') : '—'}
+          </td>
           <td>${statusPill(p.status)}</td>
         </tr>`).join('');
     }
 
-    /* ── Filter tabs ── */
+    /* ── Filter Tabs ── */
     document.getElementById('filter-tabs').addEventListener('click', e => {
       const btn = e.target.closest('.filter-tab');
       if (!btn) return;
@@ -465,14 +531,54 @@ import { getProductionData, getAnalyticsData } from '../utils/dataService.js';
 
     /* ── Modal ── */
     const overlay = document.getElementById('modal-overlay');
+
     document.getElementById('btn-log-production').addEventListener('click', () => overlay.classList.add('open'));
-    document.getElementById('modal-close').addEventListener('click',          () => overlay.classList.remove('open'));
-    document.getElementById('btn-cancel').addEventListener('click',           () => overlay.classList.remove('open'));
+    document.getElementById('modal-close').addEventListener('click',         () => overlay.classList.remove('open'));
+    document.getElementById('btn-cancel').addEventListener('click',          () => overlay.classList.remove('open'));
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
 
-    document.getElementById('btn-submit').addEventListener('click', () => {
-      overlay.classList.remove('open');
-      // In production, would POST to API and refresh data
+    document.getElementById('btn-submit').addEventListener('click', async () => {
+      const payload = {
+        crop:             document.getElementById('form-crop').value.trim(),
+        season:           document.getElementById('form-season').value,
+        area:             parseFloat(document.getElementById('form-area').value) || 0,
+        status:           document.getElementById('form-status').value,
+        planting_date:    document.getElementById('form-planting-date').value,
+        expected_harvest: document.getElementById('form-harvest-date').value,
+        yield:            document.getElementById('form-yield').value || null,
+      };
+
+      if (!payload.crop || !payload.planting_date) {
+        alert('Crop name and planting date are required.');
+        return;
+      }
+
+      try {
+        const res  = await fetch('../api/production.php', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          overlay.classList.remove('open');
+          // Refresh: re-fetch and re-render
+          const updated = await (await fetch('../api/production.php')).json();
+          production.length = 0;
+          production.push(...updated);
+          updateKPIs();
+          renderCropCards(
+            document.querySelector('.filter-tab.active')?.dataset.filter || 'all'
+          );
+          renderTable();
+        } else {
+          alert(data.error || 'Failed to save entry.');
+        }
+      } catch (err) {
+        console.error('Submit error:', err);
+        alert('Network error — could not save entry.');
+      }
     });
 
     /* ── Init ── */

@@ -8,9 +8,7 @@
 //    email     string  required
 //    password  string  required
 // =============================================================
-
 declare(strict_types=1);
-
 require_once __DIR__ . '/session.php';
 
 // ---------- Only accept POST ---------------------------------
@@ -27,7 +25,6 @@ $password =      $body['password'] ?? '';
 $errors = [];
 if ($email === '')    $errors[] = 'Email is required.';
 if ($password === '') $errors[] = 'Password is required.';
-
 if (!empty($errors)) {
     jsonResponse(['success' => false, 'errors' => $errors], 422);
 }
@@ -53,23 +50,22 @@ $profile = null;
 $role    = null;
 $farm_id = null;
 
-// Check farmers table first
-$stmt = $pdo->prepare('
-    SELECT f.id AS farmer_id, f.first_name, f.last_name, f.phone,
-           fm.id AS farm_id, fm.name AS farm_name
-    FROM farmers f
-    JOIN farms fm ON fm.farmer_id = f.id
-    WHERE f.user_id = :user_id
-    LIMIT 1
-');
+// FIX 1 — Check farmers table without JOIN so farmers with no farm are not missed
+$stmt = $pdo->prepare('SELECT id AS farmer_id, first_name, last_name, phone FROM farmers WHERE user_id = :user_id');
 $stmt->execute([':user_id' => $user['id']]);
-$farmerProfile = $stmt->fetch();
+$farmerRow = $stmt->fetch();
 
-if ($farmerProfile) {
-    $role    = 'farmer';
-    $profile = $farmerProfile;
-    $farm_id = $farmerProfile['farm_id'];
-    $_SESSION['farmer_id'] = $farmerProfile['farmer_id'];
+if ($farmerRow) {
+    $role = 'farmer';
+    $_SESSION['farmer_id'] = $farmerRow['farmer_id'];
+
+    // Separately fetch their farm (may not exist yet)
+    $stmt = $pdo->prepare('SELECT id AS farm_id, name AS farm_name FROM farms WHERE farmer_id = :farmer_id LIMIT 1');
+    $stmt->execute([':farmer_id' => $farmerRow['farmer_id']]);
+    $farmRow = $stmt->fetch();
+
+    $farm_id = $farmRow['farm_id'] ?? null;
+    $profile = array_merge($farmerRow, $farmRow ?: ['farm_id' => null, 'farm_name' => null]);
 } else {
     // Check workers table
     $stmt = $pdo->prepare('
@@ -98,10 +94,14 @@ if (!$role) {
 $stmt = $pdo->prepare('UPDATE users SET last_login_at = NOW() WHERE id = :id');
 $stmt->execute([':id' => $user['id']]);
 
+// FIX 2 — Regenerate session ID to prevent session fixation
+session_regenerate_id(true);
+
 // ---------- Start session ------------------------------------
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['farm_id'] = $farm_id;
-$_SESSION['role']    = $role;
+$_SESSION['role']    = $role; 
+$_SESSION['farm_name'] = $profile['farm_name'] ?? null; 
 
 // ---------- Response -----------------------------------------
 jsonResponse([
