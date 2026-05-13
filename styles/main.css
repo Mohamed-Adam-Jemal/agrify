@@ -190,6 +190,42 @@ nav {
   opacity: 1;
 }
 
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: var(--sidebar-text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.sidebar-footer-farm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--sidebar-text);
+  padding: 14px 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 /* Footer */
 .sidebar-footer {
   display: flex;

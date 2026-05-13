@@ -53,7 +53,7 @@ if (!empty($errors)) {
 // ---------- DB operations ------------------------------------
 $pdo = getDB();
 
-// Check duplicates
+// Check duplicates — also caught below via UNIQUE constraint as fallback
 $stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email OR username = :username');
 $stmt->execute([':email' => $email, ':username' => $username]);
 if ($stmt->fetch()) {
@@ -105,9 +105,16 @@ try {
 
 } catch (PDOException $e) {
     $pdo->rollBack();
+    // FIX 2 — Catch duplicate key from race condition and return friendly 409
+    if ($e->getCode() === '23000') {
+        jsonResponse(['success' => false, 'error' => 'Email or username already taken.'], 409);
+    }
     error_log('[agrify] Register failed: ' . $e->getMessage());
     jsonResponse(['success' => false, 'error' => 'Registration failed. Please try again.'], 500);
 }
+
+// FIX 1 — Regenerate session ID to prevent session fixation
+session_regenerate_id(true);
 
 // ---------- Start session ------------------------------------
 $_SESSION['user_id']   = $user_id;
@@ -123,7 +130,6 @@ jsonResponse([
         'id'        => $user_id,
         'username'  => $username,
         'email'     => $email,
-        'role'      => 'farmer',
         'farmer_id' => $farmer_id,
         'farm_id'   => $farm_id,
     ],
