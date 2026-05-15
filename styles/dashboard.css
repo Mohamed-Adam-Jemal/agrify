@@ -202,7 +202,7 @@
 .sensors-table th {
   padding: 12px 20px;
   text-align: left;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
@@ -388,7 +388,7 @@
 
 .action-btn {
   padding: 14px 10px;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 12px;
   display: flex;

@@ -81,6 +81,7 @@
   border-radius: 10px;
   border: 1.5px solid var(--border, #e5e7eb);
   margin-bottom: 10px;
+  background: var(--bg-secondary, #f8fafc);
   transition: border-color .2s, background .2s
 }
 
@@ -162,13 +163,13 @@
   bottom: 24px;
   right: 24px;
   z-index: 500;
-  background: rgba(255,255,255,.95);
+  background: var(--surface);
   backdrop-filter: blur(8px);
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 11px;
-  border: 1px solid rgba(0,0,0,.08);
-  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
   pointer-events: none
 }
 
@@ -208,7 +209,7 @@
   border: 1px solid var(--border, #e5e7eb);
   cursor: pointer;
   transition: all .15s;
-  background: #fff;
+  background: var(--surface);
   color: var(--text, #374151);
   display: inline-flex;
   align-items: center;

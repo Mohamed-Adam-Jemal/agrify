@@ -273,7 +273,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8fafc;
+  background: var(--bg-secondary);
   border-radius: 10px;
   padding: 12px 16px;
   margin-top: 8px;
@@ -607,7 +607,7 @@
   align-items: center;
   gap: 6px;
   padding: 9px 18px;
-  background: white;
+  background: var(--surface);
   color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -619,8 +619,8 @@
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-color: var(--border);
 }
 
 /* ---------- Page Header ---------- */

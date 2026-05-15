@@ -4,6 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Agrify — Smart Farm Management</title>
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('agrify-theme');
+        if (theme === 'dark' || theme === 'light') {
+          document.documentElement.dataset.theme = theme;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      } catch (err) {
+        console.warn('Theme init failed', err);
+      }
+    })();
+  </script>
 
   <!-- Global styles -->
   <link rel="stylesheet" href="./styles/main.css">
@@ -133,6 +147,23 @@
           </svg>
           28°C
         </span>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" aria-label="Toggle theme" onclick="toggleTheme()">🌙</button>
+        <div class="profile-menu">
+          <button id="profile-toggle-btn" class="profile-toggle-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Open profile panel">
+            <span class="profile-avatar" id="topbar-avatar">U</span>
+          </button>
+          <div id="profile-panel" class="profile-panel hidden" aria-hidden="true">
+            <div class="profile-header">
+              <div class="profile-avatar profile-avatar-lg" id="panel-avatar">U</div>
+              <div class="profile-info">
+                <div class="profile-name" id="profile-fullname">User Name</div>
+                <div class="profile-email" id="profile-email">email@example.com</div>
+              </div>
+            </div>
+            <div id="profile-error" class="profile-error hidden"></div>
+            <button id="profile-logout-btn" class="profile-logout-btn" type="button">Logout</button>
+          </div>
+        </div>
       </div>
     </header>
 

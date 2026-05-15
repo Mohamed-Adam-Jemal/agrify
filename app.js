@@ -11,6 +11,108 @@ import {
   getSensorsData
 } from './utils/dataService.js';
 
+const THEME_STORAGE_KEY = 'agrify-theme';
+
+function getSavedTheme() {
+  try {
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    return value === 'dark' || value === 'light' ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function getSystemTheme() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+}
+
+function applyTheme(theme, persist = true) {
+  if (theme !== 'dark' && theme !== 'light') return;
+  document.documentElement.dataset.theme = theme;
+  window.currentTheme = theme;
+  const button = document.getElementById('theme-toggle-btn');
+  if (button) {
+    button.textContent = theme === 'dark' ? '☀️' : '🌙';
+    button.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+  if (!persist) return;
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function getInitialTheme() {
+  return getSavedTheme() || getSystemTheme();
+}
+
+function toggleTheme() {
+  applyTheme(window.currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+function getProfileInitial(user) {
+  const name = user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'U';
+  return name.charAt(0).toUpperCase();
+}
+
+function renderProfileInfo(user) {
+  const initial = getProfileInitial(user);
+  const topbarAvatar = document.getElementById('topbar-avatar');
+  const panelAvatar = document.getElementById('panel-avatar');
+  const fullName = user.full_name || user.email || 'Unknown User';
+
+  if (topbarAvatar) topbarAvatar.textContent = initial;
+  if (panelAvatar) panelAvatar.textContent = initial;
+
+  const fullNameEl = document.getElementById('profile-fullname');
+  const emailEl = document.getElementById('profile-email');
+  if (fullNameEl) fullNameEl.textContent = fullName;
+  if (emailEl) emailEl.textContent = user.email || 'No email available';
+}
+
+function openProfilePanel() {
+  const panel = document.getElementById('profile-panel');
+  const toggle = document.getElementById('profile-toggle-btn');
+  if (panel) panel.classList.remove('hidden');
+  if (panel) panel.setAttribute('aria-hidden', 'false');
+  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+}
+
+function closeProfilePanel() {
+  const panel = document.getElementById('profile-panel');
+  const toggle = document.getElementById('profile-toggle-btn');
+  if (panel) panel.classList.add('hidden');
+  if (panel) panel.setAttribute('aria-hidden', 'true');
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+}
+
+function toggleProfilePanel() {
+  const panel = document.getElementById('profile-panel');
+  if (!panel) return;
+  if (panel.classList.contains('hidden')) {
+    openProfilePanel();
+  } else {
+    closeProfilePanel();
+  }
+}
+
+function showProfileError(message) {
+  const errorEl = document.getElementById('profile-error');
+  if (!errorEl) return;
+  if (!message) {
+    errorEl.textContent = '';
+    errorEl.classList.add('hidden');
+    return;
+  }
+  errorEl.textContent = message;
+  errorEl.classList.remove('hidden');
+}
+
+window.toggleTheme = toggleTheme;
+
 const PAGES = {
   dashboard:  { title: 'Dashboard',      subtitle: 'Live farm overview',         needsData: true  },
   stock:      { title: 'Stock',          subtitle: 'Track your inventory',        needsData: true  },
@@ -158,6 +260,7 @@ function tick() {
 // ---------- Auth guard + boot --------------------------------
 async function boot() {
   try {
+    applyTheme(getInitialTheme(), false);
     const res  = await fetch('/api/auth/me.php');
     const data = await res.json();
 
@@ -167,6 +270,29 @@ async function boot() {
     }
 
     window.currentUser = data.user;
+
+    renderProfileInfo(data.user);
+
+    const profileToggle = document.getElementById('profile-toggle-btn');
+    const profilePanel  = document.getElementById('profile-panel');
+    const profileLogout = document.getElementById('profile-logout-btn');
+
+    if (profileToggle) {
+      profileToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleProfilePanel();
+      });
+    }
+
+    if (profilePanel) {
+      profilePanel.addEventListener('click', (event) => event.stopPropagation());
+    }
+
+    if (profileLogout) {
+      profileLogout.addEventListener('click', handleLogout);
+    }
+
+    document.addEventListener('click', () => closeProfilePanel());
 
     // Set farm name in sidebar footer
     const farmLabel = document.getElementById('farm-name-label');
@@ -208,10 +334,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function handleLogout() {
+  showProfileError('');
+
   try {
-    await fetch('/api/auth/logout.php', { method: 'POST' });
-  } finally {
+    const response = await fetch('/api/auth/logout.php', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      // ignore parse errors and handle below
+    }
+
+    if (!response.ok || !data?.success) {
+      const message = data?.error || data?.message || 'Logout failed. Please try again.';
+      showProfileError(message);
+      return;
+    }
+
     window.location.href = '/auth.html';
+  } catch (err) {
+    showProfileError(err?.message || 'Unable to logout. Check your network and try again.');
   }
 }
 
