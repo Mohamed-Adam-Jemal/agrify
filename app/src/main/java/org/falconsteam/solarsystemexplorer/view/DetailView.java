@@ -261,8 +261,7 @@ public class DetailView extends BorderPane {
         Label titleLbl = new Label("⟁  DISTANCE CALCULATOR");
         titleLbl.setStyle(
             "-fx-font-size: 20px; -fx-font-weight: bold;" +
-            "-fx-text-fill: " + CYAN + ";" +
-            "-fx-effect: dropshadow(gaussian, " + CYAN + ", 18, 0.45, 0, 0);");
+            "-fx-text-fill: " + CYAN + ";");
 
         Label subtitleLbl = new Label(
             "Select two celestial bodies to measure the distance between them");
@@ -401,8 +400,10 @@ public class DetailView extends BorderPane {
         Label kmLbl = new Label(formatKm(km));
         kmLbl.setStyle(
             "-fx-font-size: 22px; -fx-font-weight: bold;" +
-            "-fx-text-fill: " + accentColor + ";" +
-            "-fx-effect: dropshadow(gaussian, " + accentColor + ", 10, 0.30, 0, 0);");
+            "-fx-text-fill: " + accentColor + ";" 
+            // +
+            // "-fx-effect: dropshadow(gaussian, " + accentColor + ", 10, 0.30, 0, 0);"
+            );
 
         Label lmLbl = new Label(String.format("%.3f light-minutes", lm));
         lmLbl.setStyle(
@@ -413,7 +414,7 @@ public class DetailView extends BorderPane {
         card.setStyle(
             "-fx-background-color: " + bgColor + ";" +
             "-fx-background-radius: 8;" +
-            "-fx-border-color: " + accentColor.replace(")", ", 0.30)").replace("rgb", "rgba") + ";" +
+            // "-fx-border-color: " + accentColor.replace(")", ", 0.30)").replace("rgb", "rgba") + ";" +
             "-fx-border-width: 1;" +
             "-fx-border-radius: 8;");
         return card;
